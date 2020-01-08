@@ -18,12 +18,12 @@ const renderer = new WebGLRenderer({ antialias: true });
 const scene = new Scene();
 
 const seedScene = new SeedScene();
-const camera = new PerspectiveCamera(10, width / height, 1, 5000);
+const camera = new PerspectiveCamera(40, width / height, 0.1, 1000);
 
 // gui
-let cameraPos = new Vector3(0, 0, 0);
-cameraPos = scene.position;
-renderGui(camera, cameraPos, new Vector3(37.65, 1.484, 35.483));
+let cameraPos = new Vector3(8.5, 2, -3);
+let targetPos = new Vector3(1, 0, 3);
+renderGui(camera, cameraPos, targetPos);
 
 // scene
 scene.add(seedScene);
@@ -31,12 +31,13 @@ scene.add(seedScene);
 // renderer
 renderer.setSize(width, height);
 renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setClearColor(0xe5e5e5, 1);
+renderer.setClearColor(0x313131, 1);
 
 // render loop
 const render = timeStamp => {
   renderer.render(scene, camera);
-  seedScene.update && seedScene.update(timeStamp);
+  //camera.lookAt(targetPos);
+  //seedScene.update && seedScene.update(timeStamp);
   window.requestAnimationFrame(render);
 };
 render();

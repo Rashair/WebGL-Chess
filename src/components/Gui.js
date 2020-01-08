@@ -12,9 +12,10 @@ const renderGui = (camera, initialPosition, initialTarget) => {
   const cam = gui.addFolder("Camera");
 
   const pos = cam.addFolder("position");
-  pos.add(camera.position, "x", -100, 100).listen();
-  pos.add(camera.position, "y", -100, 100).listen();
-  pos.add(camera.position, "z", -100, 100).listen();
+  const step = 0.1;
+  pos.add(camera.position, "x", -20, 20, step).listen();
+  pos.add(camera.position, "y", -20, 20, step).listen();
+  pos.add(camera.position, "z", -20, 20, step).listen();
 
   let target = new Vector3(initialTarget.x, initialTarget.y, initialTarget.z);
   const onTargetChange = () => camera.lookAt(target);
@@ -45,8 +46,8 @@ const renderGui = (camera, initialPosition, initialTarget) => {
   const options = {
     reset: () => {
       camera.position.set(initialPosition.x, initialPosition.y, initialPosition.z);
-      camera.lookAt(initialTarget);
       camera.setFocalLength(initialLenght);
+      camera.lookAt(initialTarget);
     },
   };
 

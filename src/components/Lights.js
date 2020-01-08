@@ -8,16 +8,12 @@ export default class BasicLights extends Group {
   constructor(lightTarget) {
     super();
 
-    const point = new PointLight(0xffffff, 1, 100, 2);
-    const dir = new SpotLight(0xffffff, 1.5, 200, 0.3, 0, 2);
-    const ambi = new AmbientLight(0x404040, 0.66);
-    const hemi = new HemisphereLight(0xffffbb, 0x080820, 1.15);
+    const light1 = new PointLight(0xccffff, 1, 22);
+    light1.position.set(9, 3, 9);
 
-    dir.position.set(0, 0, 0);
-    dir.target = lightTarget;
+    const light2 = new PointLight(0xfff0cf, 2, 22);
+    light2.position.set(-9, 3, 9);
 
-    point.position.set(0, 0, 0);
-
-    this.add(dir, ambi, hemi);
+    this.add(light1, light2);
   }
 }

@@ -4,9 +4,10 @@ Proof of concept for chess using WebGL with Three.js
 
 ## Resources
 
-Template for three project with webpack acquired from [three-seed](https://github.com/edwinwebb/three-seed)
-Models for chess pieces acquired from [free3d](https://free3d.com/3d-model/chessboard-716865.html)
-Icon acquired from [iconarchive](http://www.iconarchive.com/show/orb-os-x-icons-by-osullivanluke/Chess-icon.html)
+Template for three project with webpack acquired from [three-seed](https://github.com/edwinwebb/three-seed)  
+Models for chess pieces acquired from [free3d](https://free3d.com/3d-model/chessboard-716865.html)  
+Favicon acquired from [iconarchive](http://www.iconarchive.com/show/orb-os-x-icons-by-osullivanluke/Chess-icon.html)
+Board created with help of [codepen](https://codepen.io/foolof41/details/ALXKjp)
 
 ## Install
 
