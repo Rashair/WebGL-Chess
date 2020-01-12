@@ -10,7 +10,7 @@
     "webpack"
   ],
   "scripts": {
-    "start": "webpack-dev-server --mode development",
+    "start": "webpack-dev-server --mode development --open",
     "prebuild": "rimraf ./build && mkdir ./build",
     "build": "webpack --mode production"
   },

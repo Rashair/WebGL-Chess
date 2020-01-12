@@ -1,5 +1,4 @@
 const path = require("path");
-const pkg = require("./package.json");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const buildPath = "./build/";

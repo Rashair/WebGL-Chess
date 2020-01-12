@@ -28,22 +28,26 @@ export default class SeedScene extends Group {
 
     const squareTopY = squareGeom.boundingBox.min.y;
     const piecesLoading = this.loadPieces();
-    Promise.all(piecesLoading).then(pieces =>
-      pieces.forEach(piece => {
+    const _this = this;
+    Promise.all(piecesLoading).then(pieceObjects => {
+      _this.pieces = new Array(32);
+      pieceObjects.forEach(piece => {
         const type = piece.pieceType;
         const mesh = piece.pieceMesh;
         const yAdjustment = squareTopY - piece.getMinY();
-        const initPieces = (num, mat) => {
-          const pieces = new Array(num);
+        const initPieces = (num, mat, colour = null) => {
+          const piecesArr = new Array(num);
           for (let i = 0; i < num; ++i) {
-            pieces[i] = new Piece(type, false);
-            pieces[i].addPieceMesh(mesh.clone(), mat);
+            piecesArr[i] = new Piece(type, false);
+            piecesArr[i].addPieceMesh(mesh.clone(), mat);
+            piecesArr[i].pieceColour = colour;
           }
-          return pieces;
+          return piecesArr;
         };
         const addPieceToBoard = (row, col, piece) => {
           board[row][col].add(piece);
           piece.position.y += yAdjustment;
+          _this.pieces.push(piece);
         };
 
         switch (type) {
@@ -62,13 +66,13 @@ export default class SeedScene extends Group {
           }
           case "Knight": {
             const num = 2;
-            const whites = initPieces(num, whiteMat);
-            // TODO: whites.forEach(knight => knight.rotateY(Math.PI / 2));
+            const whites = initPieces(num, whiteMat, "White");
+            whites.forEach(knight => knight.rotateY(Math.PI / 2));
             addPieceToBoard(0, 1, whites[0]);
             addPieceToBoard(0, 6, whites[1]);
 
             const blacks = initPieces(num, blackMat);
-            // TODO: blacks.forEach(knight => knight.rotateY(Math.PI / 2));
+            blacks.forEach(knight => knight.rotateY(-Math.PI / 2));
             addPieceToBoard(7, 1, blacks[0]);
             addPieceToBoard(7, 6, blacks[1]);
             break;
@@ -114,8 +118,8 @@ export default class SeedScene extends Group {
             break;
           }
         }
-      })
-    );
+      });
+    });
   }
 
   initSquareGeometry() {
@@ -174,5 +178,17 @@ export default class SeedScene extends Group {
   addAll(objects) {
     const This = this;
     objects.forEach(objArr => objArr.forEach(obj => This.add(obj)));
+  }
+
+  update(timeStamp) {
+    if (!this.pieces) {
+      return;
+    }
+
+    // this.pieces.forEach(piece => {
+    //   if (piece.pieceType === "Knight" && piece.pieceColour === "White") {
+    //     piece.rotation.y = timeStamp / 1000;
+    //   }
+    // });
   }
 }
