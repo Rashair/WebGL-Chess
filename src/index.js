@@ -29,6 +29,8 @@ renderGui(camera, cameraPos);
 const controls = new OrbitControls(camera, dom);
 controls.target = new Vector3(-0.5, 0, 2.5);
 controls.maxPolarAngle = Math.PI / 2;
+controls.enabled = false;
+controls.update();
 
 // mouse interaction
 const interaction = new Interaction(renderer, scene, camera);
@@ -44,8 +46,8 @@ renderer.setClearColor(0x313131, 1);
 
 // render loop
 const render = timeStamp => {
-  controls.update();
-  //camera.lookAt(targetPos);
+  //controls.update();
+
   seedScene.update && seedScene.update(timeStamp);
   renderer.render(scene, camera);
   window.requestAnimationFrame(render);

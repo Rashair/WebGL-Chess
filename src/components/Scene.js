@@ -211,8 +211,14 @@ export default class SeedScene extends Group {
    * @param {Mesh} to
    */
   movePiece(from, to) {
+    const source = from.position;
+    const target = to.position;
+    if (source.z != target.z) {
+      return;
+    }
+
     const piece = from.children[0];
-    const distance = to.position.x - from.position.x;
+    const distance = target.x - source.x;
     piece.move(distance, () => {
       piece.position.x = 0;
       to.add(piece);
