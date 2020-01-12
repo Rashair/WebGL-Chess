@@ -45,10 +45,12 @@ export default class SeedScene extends Group {
           return piecesArr;
         };
         const addPiece = (row, col, piece) => {
-          board[row][col].add(piece);
+          const square = board[row][col];
+          square.add(piece);
           piece.position.y += yAdjustment + 0.01;
 
           _this.pieces.push(piece);
+          piece.on("click", ev => _this.onPieceClick(ev, _this));
         };
 
         switch (type) {
@@ -145,6 +147,7 @@ export default class SeedScene extends Group {
         const square = new Mesh(squareGeom, (x + z) % 2 == 0 ? whiteMat : blackMat);
         square.position.x = x;
         square.position.z = z;
+        square.on("click", ev => this.onSquareClick(ev, this));
         row.push(square);
       }
       squares.push(row);
@@ -177,8 +180,44 @@ export default class SeedScene extends Group {
    * @param {Object3D[][]} objects
    */
   addAll(objects) {
-    const This = this;
-    objects.forEach(objArr => objArr.forEach(obj => This.add(obj)));
+    const _this = this;
+    objects.forEach(objArr => objArr.forEach(obj => _this.add(obj)));
+  }
+
+  onPieceClick(ev, scene) {
+    ev.stopPropagation();
+    scene.setSelectedPiece(ev.target);
+  }
+
+  setSelectedPiece(piece) {
+    this.selectedPiece = piece;
+  }
+
+  onSquareClick(ev, scene) {
+    ev.stopPropagation();
+    const _this = ev.target;
+    if (!scene.selectedPiece || _this.children.length > 0) {
+      return;
+    }
+
+    scene.movePiece(scene.selectedPiece.parent, _this);
+    scene.selectedPiece = null;
+  }
+
+  /**
+   *
+   * @param {Piece} piece
+   * @param {Mesh} from
+   * @param {Mesh} to
+   */
+  movePiece(from, to) {
+    const piece = from.children[0];
+    const distance = to.position.x - from.position.x;
+    piece.move(distance, () => {
+      piece.position.x = 0;
+      to.add(piece);
+      from.children.pop();
+    });
   }
 
   update(timeStamp) {

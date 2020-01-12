@@ -28,6 +28,7 @@ renderGui(camera, cameraPos);
 // controls - must be called after cameraPos is set
 const controls = new OrbitControls(camera, dom);
 controls.target = new Vector3(-0.5, 0, 2.5);
+controls.maxPolarAngle = Math.PI / 2;
 
 // mouse interaction
 const interaction = new Interaction(renderer, scene, camera);
