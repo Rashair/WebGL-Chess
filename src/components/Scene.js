@@ -46,7 +46,7 @@ export default class SeedScene extends Group {
         };
         const addPiece = (row, col, piece) => {
           board[row][col].add(piece);
-          piece.position.y += yAdjustment;
+          piece.position.y += yAdjustment + 0.01;
 
           _this.pieces.push(piece);
         };
@@ -124,7 +124,7 @@ export default class SeedScene extends Group {
   }
 
   initSquareGeometry() {
-    const geom = new BoxGeometry(1, 0.03, 1);
+    const geom = new BoxGeometry(1, 0.05, 1);
     geom.computeFaceNormals();
     geom.vertices.forEach(function(v) {
       if (v.y > 0) {
