@@ -44,9 +44,10 @@ export default class SeedScene extends Group {
           }
           return piecesArr;
         };
-        const addPieceToBoard = (row, col, piece) => {
+        const addPiece = (row, col, piece) => {
           board[row][col].add(piece);
           piece.position.y += yAdjustment;
+
           _this.pieces.push(piece);
         };
 
@@ -55,12 +56,12 @@ export default class SeedScene extends Group {
             const num = 8;
             const whites = initPieces(num, whiteMat);
             for (let i = 0; i < num; ++i) {
-              addPieceToBoard(1, i, whites[i]);
+              addPiece(1, i, whites[i]);
             }
 
             const blacks = initPieces(num, blackMat);
             for (let i = 0; i < num; ++i) {
-              addPieceToBoard(6, i, blacks[i]);
+              addPiece(6, i, blacks[i]);
             }
             break;
           }
@@ -68,53 +69,53 @@ export default class SeedScene extends Group {
             const num = 2;
             const whites = initPieces(num, whiteMat, "White");
             whites.forEach(knight => knight.rotateY(Math.PI / 2));
-            addPieceToBoard(0, 1, whites[0]);
-            addPieceToBoard(0, 6, whites[1]);
+            addPiece(0, 1, whites[0]);
+            addPiece(0, 6, whites[1]);
 
             const blacks = initPieces(num, blackMat);
             blacks.forEach(knight => knight.rotateY(-Math.PI / 2));
-            addPieceToBoard(7, 1, blacks[0]);
-            addPieceToBoard(7, 6, blacks[1]);
+            addPiece(7, 1, blacks[0]);
+            addPiece(7, 6, blacks[1]);
             break;
           }
           case "Bishop": {
             const num = 2;
             const whites = initPieces(num, whiteMat);
-            addPieceToBoard(0, 2, whites[0]);
-            addPieceToBoard(0, 5, whites[1]);
+            addPiece(0, 2, whites[0]);
+            addPiece(0, 5, whites[1]);
 
             const blacks = initPieces(num, blackMat);
-            addPieceToBoard(7, 2, blacks[0]);
-            addPieceToBoard(7, 5, blacks[1]);
+            addPiece(7, 2, blacks[0]);
+            addPiece(7, 5, blacks[1]);
             break;
           }
           case "Rook": {
             const num = 2;
             const whites = initPieces(num, whiteMat);
-            addPieceToBoard(0, 0, whites[0]);
-            addPieceToBoard(0, 7, whites[1]);
+            addPiece(0, 0, whites[0]);
+            addPiece(0, 7, whites[1]);
 
             const blacks = initPieces(num, blackMat);
-            addPieceToBoard(7, 0, blacks[0]);
-            addPieceToBoard(7, 7, blacks[1]);
+            addPiece(7, 0, blacks[0]);
+            addPiece(7, 7, blacks[1]);
             break;
           }
           case "Queen": {
             const num = 1;
             const whites = initPieces(num, whiteMat);
-            addPieceToBoard(0, 3, whites[0]);
+            addPiece(0, 3, whites[0]);
 
             const blacks = initPieces(num, blackMat);
-            addPieceToBoard(7, 3, blacks[0]);
+            addPiece(7, 3, blacks[0]);
             break;
           }
           case "King": {
             const num = 1;
             const whites = initPieces(num, whiteMat);
-            addPieceToBoard(0, 4, whites[0]);
+            addPiece(0, 4, whites[0]);
 
             const blacks = initPieces(num, blackMat);
-            addPieceToBoard(7, 4, blacks[0]);
+            addPiece(7, 4, blacks[0]);
             break;
           }
         }

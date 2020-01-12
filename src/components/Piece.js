@@ -1,4 +1,5 @@
-import { Group, Mesh, Box3, Material, MeshBasicMaterial } from "three";
+import { Group, Mesh, Box3, Material, MeshBasicMaterial, Math } from "three";
+import { Ticker } from "three.interaction";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 const path = require("path");
 
@@ -14,6 +15,7 @@ export default class Piece extends Group {
     this.pieceType = type;
     this.loadPromise = shouldLoad === true ? this.load(material) : null;
     this.boundingBox = null;
+    this.on("rightdown", this.onPieceRightDown);
   }
 
   async load(material) {
@@ -62,5 +64,18 @@ export default class Piece extends Group {
 
   getMinY() {
     return this.getBoundingBox().min.y;
+  }
+
+  onPieceRightDown(ev) {
+    ev.stopPropagation();
+    if (this.tickerId) {
+      clearInterval(this.tickerId);
+      this.tickerId = null;
+      return;
+    }
+
+    this.tickerId = setInterval(() => {
+      this.rotation.y += Math.degToRad(4);
+    }, 60);
   }
 }

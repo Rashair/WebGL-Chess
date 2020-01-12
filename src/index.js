@@ -8,6 +8,7 @@
  */
 
 import { WebGLRenderer, PerspectiveCamera, Scene, Vector3, Fog } from "three";
+import { Interaction } from "three.interaction";
 import renderGui from "./components/Gui.js";
 import SeedScene from "./components/Scene.js";
 
@@ -16,9 +17,8 @@ const height = 720;
 
 const renderer = new WebGLRenderer({ antialias: true });
 const scene = new Scene();
-
-const seedScene = new SeedScene();
 const camera = new PerspectiveCamera(40, width / height, 0.1, 1000);
+const interaction = new Interaction(renderer, scene, camera);
 
 // gui
 let cameraPos = new Vector3(8.5, 2, -3);
@@ -26,6 +26,7 @@ let targetPos = new Vector3(1, 0, 3);
 renderGui(camera, cameraPos, targetPos);
 
 // scene
+const seedScene = new SeedScene();
 scene.add(seedScene);
 
 // renderer
@@ -53,4 +54,6 @@ window.requestAnimationFrame(render);
 // window.addEventListener("resize", windowResizeHandler);
 
 // dom
+const dom = renderer.domElement;
+dom.oncontextmenu = () => false;
 document.body.appendChild(renderer.domElement);
