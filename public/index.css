@@ -7,3 +7,13 @@ canvas {
 body {
   background-color: 0x0000000;
 }
+
+#info {
+  position: absolute;
+  top: 10;
+  width: 50em;
+  text-align: left;
+  z-index: 100;
+  color: white;
+  display: block;
+}

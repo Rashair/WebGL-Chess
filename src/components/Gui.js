@@ -6,25 +6,19 @@ import { Vector3, PerspectiveCamera } from "three";
  * @param {Vector3} initialPosition - camera position
  * @param {Vector3} initialTarget - camera target
  */
-const renderGui = (camera, initialPosition) => {
+const renderGui = (camera, initialPosition, scene) => {
   const gui = new GUI();
 
+  //gui.add(scene, "selectedPiece");
+
   const cam = gui.addFolder("Camera");
-
-  const pos = cam.addFolder("position");
-  const step = 0.1;
-  pos.add(camera.position, "x", -20, 20, step).listen();
-  pos.add(camera.position, "y", -20, 20, step).listen();
-  pos.add(camera.position, "z", -20, 20, step).listen();
-
   const initialLenght = camera.getFocalLength();
   const focalLength = { len: initialLenght };
   const onLenChange = val => camera.setFocalLength(val);
   cam
-    .add(focalLength, "len", 1, 200)
+    .add(focalLength, "len", 5, 250)
     .onChange(onLenChange)
     .listen();
-
   cam.open();
 
   const options = {

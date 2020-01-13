@@ -15,6 +15,7 @@ export default class Piece extends Group {
     this.pieceType = type;
     this.loadPromise = shouldLoad === true ? this.load(material) : null;
     this.boundingBox = null;
+    this.pieceSquare = null;
     this.on("rightdown", this.onMouseRightDown);
   }
 

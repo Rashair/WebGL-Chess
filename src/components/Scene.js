@@ -3,8 +3,13 @@ import BasicLights from "./Lights.js";
 import Piece from "./Piece";
 
 export default class SeedScene extends Group {
-  constructor() {
+  /**
+   *
+   * @param {HTMLElement} info
+   */
+  constructor(info) {
     super();
+    this.info = info;
 
     const lights = new BasicLights();
     this.add(lights);
@@ -48,6 +53,7 @@ export default class SeedScene extends Group {
           const square = board[row][col];
           square.add(piece);
           piece.position.y += yAdjustment + 0.01;
+          piece.pieceSquare = this.parsePosition(row, col);
 
           _this.pieces.push(piece);
           piece.on("click", ev => _this.onPieceClick(ev, _this));
@@ -156,6 +162,16 @@ export default class SeedScene extends Group {
     return squares;
   }
 
+  parseRealPosition(row, col) {
+    return this.parsePosition(row + 4, 6 - col);
+  }
+
+  parsePosition(row, col) {
+    const aCode = "a".charCodeAt(0);
+    const oneCode = "1".charCodeAt(0);
+    return String.fromCharCode(aCode + col, oneCode + row);
+  }
+
   loadPieces() {
     const pawn = new Piece("Pawn");
     const knight = new Piece("Knight");
@@ -189,8 +205,21 @@ export default class SeedScene extends Group {
     scene.setSelectedPiece(ev.target);
   }
 
+  /**
+   *
+   * @param {Piece} piece
+   */
   setSelectedPiece(piece) {
     this.selectedPiece = piece;
+    if (piece) {
+      this.setInfo(`${piece.pieceType}: ${piece.pieceSquare}`);
+    } else {
+      //this.setInfo("");
+    }
+  }
+
+  setInfo(text) {
+    this.info.textContent = text;
   }
 
   onSquareClick(ev, scene) {
@@ -201,7 +230,7 @@ export default class SeedScene extends Group {
     }
 
     scene.movePiece(scene.selectedPiece.parent, _this);
-    scene.selectedPiece = null;
+    scene.setSelectedPiece(null);
   }
 
   /**
@@ -219,8 +248,12 @@ export default class SeedScene extends Group {
 
     const piece = from.children[0];
     const distance = target.x - source.x;
+    const sourceParsed = this.parseRealPosition(source.x, source.z);
+    const targetParsed = this.parseRealPosition(target.x, target.z);
+    this.setInfo(`${piece.pieceType} from ${sourceParsed} to ${targetParsed}`);
     piece.move(distance, () => {
       piece.position.x = 0;
+      piece.pieceSquare = targetParsed;
       to.add(piece);
       from.children.pop();
     });

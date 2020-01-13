@@ -1,12 +1,3 @@
-/**
- * index.js
- *
- * This is the first file loaded. It sets up the Renderer,
- * Scene and Camera. It also starts the render loop and
- * handles window resizes.
- *
- */
-
 import { WebGLRenderer, PerspectiveCamera, Scene, Vector3, Fog } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Interaction } from "three.interaction";
@@ -19,11 +10,13 @@ const height = 720;
 const renderer = new WebGLRenderer({ antialias: true });
 const dom = renderer.domElement;
 const scene = new Scene();
+const info = document.getElementById("info");
+const seedScene = new SeedScene(info);
 const camera = new PerspectiveCamera(40, width / height, 0.1, 1000);
 
 // gui
 let cameraPos = new Vector3(10, 4, -3);
-renderGui(camera, cameraPos);
+renderGui(camera, cameraPos, seedScene);
 
 // controls - must be called after cameraPos is set
 const controls = new OrbitControls(camera, dom);
@@ -36,7 +29,6 @@ controls.update();
 const interaction = new Interaction(renderer, scene, camera);
 
 // scene
-const seedScene = new SeedScene();
 scene.add(seedScene);
 
 // renderer
