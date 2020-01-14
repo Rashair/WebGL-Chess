@@ -216,6 +216,7 @@ export default class SeedScene extends Group {
     } else {
       //this.setInfo("");
     }
+    console.log(piece.getBoundingBox());
   }
 
   setInfo(text) {
@@ -230,7 +231,7 @@ export default class SeedScene extends Group {
     }
 
     scene.movePiece(scene.selectedPiece.parent, _this);
-    scene.setSelectedPiece(null);
+    //scene.setSelectedPiece(null);
   }
 
   /**
@@ -252,9 +253,10 @@ export default class SeedScene extends Group {
     const targetParsed = this.parseRealPosition(target.x, target.z);
     this.setInfo(`${piece.pieceType} from ${sourceParsed} to ${targetParsed}`);
     piece.move(distance, () => {
-      piece.position.x = 0;
+      // TODO: Change moving to sth smoother
       piece.pieceSquare = targetParsed;
       to.add(piece);
+      piece.position.x = 0;
       from.children.pop();
     });
   }

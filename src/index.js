@@ -17,13 +17,15 @@ const camera = new PerspectiveCamera(40, width / height, 0.1, 1000);
 // gui
 let cameraPos = new Vector3(10, 4, -3);
 renderGui(camera, cameraPos, seedScene);
+let cameraTarget = new Vector3(-0.5, 0, 2.5);
+camera.lookAt(cameraTarget);
 
 // controls - must be called after cameraPos is set
-const controls = new OrbitControls(camera, dom);
-controls.target = new Vector3(-0.5, 0, 2.5);
-controls.maxPolarAngle = Math.PI / 2;
-controls.enabled = false;
-controls.update();
+// const controls = new OrbitControls(camera, dom);
+// controls.target = new Vector3(-0.5, 0, 2.5);
+// controls.maxPolarAngle = Math.PI / 2;
+// controls.enabled = false;
+// controls.update();
 
 // mouse interaction
 const interaction = new Interaction(renderer, scene, camera);
@@ -38,8 +40,12 @@ renderer.setClearColor(0x313131, 1);
 
 // render loop
 const render = timeStamp => {
-  //controls.update();
-
+  // controls.update();
+  if (seedScene.selectedPiece) {
+    // seedScene.updateMatrixWorld();
+    seedScene.selectedPiece.getWorldPosition(cameraTarget);
+    camera.lookAt(cameraTarget);
+  }
   seedScene.update && seedScene.update(timeStamp);
   renderer.render(scene, camera);
   window.requestAnimationFrame(render);
