@@ -62,12 +62,12 @@ export default class SeedScene extends Group {
         switch (type) {
           case "Pawn": {
             const num = 8;
-            const whites = initPieces(num, whiteMat);
+            const whites = initPieces(num, whiteMat, "White");
             for (let i = 0; i < num; ++i) {
               addPiece(1, i, whites[i]);
             }
 
-            const blacks = initPieces(num, blackMat);
+            const blacks = initPieces(num, blackMat, "Black");
             for (let i = 0; i < num; ++i) {
               addPiece(6, i, blacks[i]);
             }
@@ -80,7 +80,7 @@ export default class SeedScene extends Group {
             addPiece(0, 1, whites[0]);
             addPiece(0, 6, whites[1]);
 
-            const blacks = initPieces(num, blackMat);
+            const blacks = initPieces(num, blackMat, "Black");
             blacks.forEach(knight => knight.rotateY(-Math.PI / 2));
             addPiece(7, 1, blacks[0]);
             addPiece(7, 6, blacks[1]);
@@ -88,41 +88,41 @@ export default class SeedScene extends Group {
           }
           case "Bishop": {
             const num = 2;
-            const whites = initPieces(num, whiteMat);
+            const whites = initPieces(num, whiteMat, "White");
             addPiece(0, 2, whites[0]);
             addPiece(0, 5, whites[1]);
 
-            const blacks = initPieces(num, blackMat);
+            const blacks = initPieces(num, blackMat, "Black");
             addPiece(7, 2, blacks[0]);
             addPiece(7, 5, blacks[1]);
             break;
           }
           case "Rook": {
             const num = 2;
-            const whites = initPieces(num, whiteMat);
+            const whites = initPieces(num, whiteMat, "White");
             addPiece(0, 0, whites[0]);
             addPiece(0, 7, whites[1]);
 
-            const blacks = initPieces(num, blackMat);
+            const blacks = initPieces(num, blackMat, "Black");
             addPiece(7, 0, blacks[0]);
             addPiece(7, 7, blacks[1]);
             break;
           }
           case "Queen": {
             const num = 1;
-            const whites = initPieces(num, whiteMat);
+            const whites = initPieces(num, whiteMat, "White");
             addPiece(0, 3, whites[0]);
 
-            const blacks = initPieces(num, blackMat);
+            const blacks = initPieces(num, blackMat, "Black");
             addPiece(7, 3, blacks[0]);
             break;
           }
           case "King": {
             const num = 1;
-            const whites = initPieces(num, whiteMat);
+            const whites = initPieces(num, whiteMat, "White");
             addPiece(0, 4, whites[0]);
 
-            const blacks = initPieces(num, blackMat);
+            const blacks = initPieces(num, blackMat, "Black");
             addPiece(7, 4, blacks[0]);
             break;
           }
@@ -154,9 +154,18 @@ export default class SeedScene extends Group {
         square.position.x = x;
         square.position.z = z;
         square.on("click", ev => this.onSquareClick(ev, this));
+        square.onSquareKeyPress = () => this.onSquareKeyPress(square, this);
+
         row.push(square);
       }
       squares.push(row);
+    }
+
+    for (let i = 0; i < 8; ++i) {
+      for (let j = 0; j < 8; ++j) {
+        if (i < 7) squares[i][j].forward = squares[i + 1][j];
+        if (i > 0) squares[i][j].backward = squares[i - 1][j];
+      }
     }
 
     return squares;
@@ -211,12 +220,13 @@ export default class SeedScene extends Group {
    */
   setSelectedPiece(piece) {
     this.selectedPiece = piece;
+    this.press = piece.parent.onSquareKeyPress;
     if (piece) {
       this.setInfo(`${piece.pieceType}: ${piece.pieceSquare}`);
     } else {
-      //this.setInfo("");
+      // this.setInfo("");
     }
-    console.log(piece.getBoundingBox());
+    // console.log(piece.getBoundingBox());
   }
 
   setInfo(text) {
@@ -226,12 +236,25 @@ export default class SeedScene extends Group {
   onSquareClick(ev, scene) {
     ev.stopPropagation();
     const _this = ev.target;
-    if (!scene.selectedPiece || _this.children.length > 0) {
+    if (!scene.selectedPiece || _this.children.length > 0 || this.isPieceMoving) {
       return;
     }
 
     scene.movePiece(scene.selectedPiece.parent, _this);
-    //scene.setSelectedPiece(null);
+    // scene.setSelectedPiece(null);
+  }
+
+  /**
+   * @param {SeedScene} scene
+   */
+  onSquareKeyPress(_this, scene) {
+    const selected = scene.selectedPiece;
+    const target = selected.pieceColour === "White" ? _this.forward : _this.backward;
+    if (!scene.selectedPiece || target.children.length > 0 || this.isPieceMoving) {
+      return;
+    }
+
+    scene.movePiece(_this, target);
   }
 
   /**
@@ -241,6 +264,7 @@ export default class SeedScene extends Group {
    * @param {Mesh} to
    */
   movePiece(from, to) {
+    this.isPieceMoving = true;
     const source = from.position;
     const target = to.position;
     if (source.z != target.z) {
@@ -258,18 +282,14 @@ export default class SeedScene extends Group {
       to.add(piece);
       piece.position.x = 0;
       from.children.pop();
+      this.setSelectedPiece(piece);
+      this.isPieceMoving = false;
     });
   }
 
-  update(timeStamp) {
+  update() {
     if (!this.pieces) {
       return;
     }
-
-    // this.pieces.forEach(piece => {
-    //   if (piece.pieceType === "Knight" && piece.pieceColour === "White") {
-    //     piece.rotation.y = timeStamp / 1000;
-    //   }
-    // });
   }
 }

@@ -16,6 +16,7 @@ export default class Piece extends Group {
     this.loadPromise = shouldLoad === true ? this.load(material) : null;
     this.boundingBox = null;
     this.pieceSquare = null;
+    this.pieceColour = "";
     this.on("rightdown", this.onMouseRightDown);
   }
 
@@ -65,6 +66,10 @@ export default class Piece extends Group {
 
   getMinY() {
     return this.getBoundingBox().min.y;
+  }
+
+  getMaxY() {
+    return this.getBoundingBox().max.y;
   }
 
   onMouseRightDown(ev) {

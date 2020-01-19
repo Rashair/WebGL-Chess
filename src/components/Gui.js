@@ -6,38 +6,73 @@ import { Vector3, PerspectiveCamera } from "three";
  * @param {Vector3} initialPosition - camera position
  * @param {Vector3} initialTarget - camera target
  */
-const renderGui = (camera, initialPosition, scene) => {
+const renderGui = (camera, controls) => {
   const gui = new GUI();
-
-  // TODO: add cameras array and switch;
+  const initialPosition = { ...camera.position };
+  const initialTarget = { ...controls.target };
+  const initialLenght = camera.getFocalLength();
+  const options = {
+    reset: () => {
+      camera.position.set(initialPosition.x, initialPosition.y, initialPosition.z);
+      camera.setFocalLength(initialLenght);
+      camera.lookAt(initialTarget.x, initialTarget.y, initialTarget.z);
+      controls.enabled = false;
+      camera.update = () => {};
+    },
+  };
 
   const cam = gui.addFolder("Camera");
-  const initialLenght = camera.getFocalLength();
   const focalLength = { len: initialLenght };
   const onLenChange = val => camera.setFocalLength(val);
   cam
     .add(focalLength, "len", 5, 300)
     .onChange(onLenChange)
     .listen();
-  const camOptions = {
-    staticCamera: () => {},
-    followCamera: () => {},
-    fpCamera: () => {},
+
+  const target = new Vector3();
+  const updateFollow = seedScene => {
+    if (seedScene.selectedPiece) {
+      // seedScene.updateMatrixWorld();
+      seedScene.selectedPiece.getWorldPosition(target);
+      camera.lookAt(target);
+    }
   };
+  const updateFP = seedScene => {
+    const selected = seedScene.selectedPiece;
+    if (selected) {
+      // seedScene.updateMatrixWorld();
+      selected.getWorldPosition(target);
+      const maxY = selected.getMaxY();
+      camera.position.set(target.x, maxY + 0.1, target.z);
+      const dir = selected.pieceColour == "White" ? 1 : -1;
+      camera.lookAt(target.x + dir, maxY, target.z);
+    }
+  };
+  const camOptions = {
+    movingCamera: () => {
+      options.reset();
+      controls.enabled = true;
+    },
+    staticCamera: () => {
+      options.reset();
+    },
+    followCamera: () => {
+      options.reset();
+      camera.update = updateFollow;
+    },
+    fpCamera: () => {
+      options.reset();
+      camera.update = updateFP;
+    },
+  };
+  cam.add(camOptions, "movingCamera");
   cam.add(camOptions, "staticCamera");
   cam.add(camOptions, "followCamera");
   cam.add(camOptions, "fpCamera");
   cam.open();
 
-  const options = {
-    reset: () => {
-      camera.position.set(initialPosition.x, initialPosition.y, initialPosition.z);
-      camera.setFocalLength(initialLenght);
-    },
-  };
-
   gui.add(options, "reset");
-  options.reset();
+  camOptions.staticCamera();
 };
 
 export default renderGui;
