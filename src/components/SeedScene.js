@@ -1,8 +1,9 @@
-import { Group, Colors, BoxGeometry, MeshPhongMaterial, Mesh, SmoothShading, Object3D } from "three";
+import { Group, BoxGeometry, MeshPhongMaterial, Mesh, SmoothShading, Object3D, Scene, Vector3 } from "three";
 import BasicLights from "./Lights.js";
 import Piece from "./Piece";
+import { setPosition } from "./helpers/functions.js";
 
-export default class SeedScene extends Group {
+export default class SeedScene extends Scene {
   /**
    *
    * @param {HTMLElement} info
@@ -11,8 +12,10 @@ export default class SeedScene extends Group {
     super();
     this.info = info;
 
-    const lights = new BasicLights();
-    this.add(lights);
+    this.lights = new BasicLights();
+    this.add(this.lights);
+    this.directLightTarget = new Object3D();
+    this.add(this.directLightTarget);
 
     const whiteMat = new MeshPhongMaterial({
       color: 0xffffff,
@@ -219,14 +222,43 @@ export default class SeedScene extends Group {
    * @param {Piece} piece
    */
   setSelectedPiece(piece) {
+    if (this.selectedPiece) {
+      this.selectedPiece.light = null;
+    }
+
     this.selectedPiece = piece;
+    this.selectedPiece.light = this.lights.directLight;
     this.press = piece.parent.onSquareKeyPress;
+
+    // set light on selected piece
+    this.moveLightToPiece(piece);
+    this.changePieceLightDirection(piece);
+
     if (piece) {
       this.setInfo(`${piece.pieceType}: ${piece.pieceSquare}`);
-    } else {
-      // this.setInfo("");
     }
-    // console.log(piece.getBoundingBox());
+  }
+
+  moveLightToPiece(piece) {
+    const light = this.lights.directLight;
+    const target = new Vector3();
+    piece.getWorldPosition(target);
+    const maxY = piece.getMaxY();
+    light.position.set(target.x, maxY - 0.1, target.z);
+  }
+
+  changePieceLightDirection(piece) {
+    const light = this.lights.directLight;
+    const lightTarget = this.directLightTarget;
+    const target = new Vector3();
+    piece.getWorldPosition(target);
+    const dir = piece.pieceColour === "White" ? 1 : -1;
+    lightTarget.position.set(target.x + 20 * dir, 0, target.z);
+    light.target = this.directLightTarget;
+    light.rotateOnMove = (t, a, b) => {
+      lightTarget.position.x = a + 10 * Math.cos(t);
+      lightTarget.position.z = b + 10 * Math.sin(t);
+    };
   }
 
   setInfo(text) {
@@ -237,6 +269,7 @@ export default class SeedScene extends Group {
     ev.stopPropagation();
     const _this = ev.target;
     if (!scene.selectedPiece || _this.children.length > 0 || this.isPieceMoving) {
+      console.log("Prevented move");
       return;
     }
 
@@ -264,30 +297,34 @@ export default class SeedScene extends Group {
    * @param {Mesh} to
    */
   movePiece(from, to) {
-    this.isPieceMoving = true;
+    console.log("Trying to move piece");
     const source = from.position;
     const target = to.position;
     if (source.z != target.z) {
       return;
     }
 
+    this.isPieceMoving = true;
     const piece = from.children[0];
     const distance = target.x - source.x;
     const sourceParsed = this.parseRealPosition(source.x, source.z);
     const targetParsed = this.parseRealPosition(target.x, target.z);
     this.setInfo(`${piece.pieceType} from ${sourceParsed} to ${targetParsed}`);
-    piece.move(distance, () => {
-      // TODO: Change moving to sth smoother
-      piece.pieceSquare = targetParsed;
-      to.add(piece);
-      piece.position.x = 0;
-      from.children.pop();
-      this.setSelectedPiece(piece);
-      this.isPieceMoving = false;
-    });
+    piece.move(
+      distance,
+      () => this.moveLightToPiece(piece),
+      () => {
+        // TODO: Change moving to sth smoother
+        piece.pieceSquare = targetParsed;
+        to.add(from.children.pop());
+        piece.position.x = 0;
+        this.setSelectedPiece(piece);
+        this.isPieceMoving = false;
+      }
+    );
   }
 
-  update() {
+  update(timeStamp) {
     if (!this.pieces) {
       return;
     }

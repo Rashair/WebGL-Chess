@@ -80,18 +80,40 @@ export default class Piece extends Group {
       return;
     }
 
-    this.rotateTimerId = setInterval(() => {
-      this.rotation.y += ThreeMath.degToRad(1);
-    }, 15);
+    let rotateFunc;
+    if (!this.light) {
+      rotateFunc = () => {
+        this.rotation.y = (this.rotation.y + ThreeMath.degToRad(1)) % 360;
+      };
+    } else {
+      const a = this.position.x;
+      const b = this.position.z;
+      let shift = 0;
+      if (this.pieceType === "Knight") {
+        shift = this.pieceColour === "White" ? this.rotation.y : -this.rotation.y;
+      } else {
+        shift = this.pieceColour === "White" ? 0 : ThreeMath.degToRad(180);
+      }
+      console.log(shift);
+      rotateFunc = () => {
+        this.rotation.y += ThreeMath.degToRad(1);
+        if (this.light) {
+          this.light.rotateOnMove(-this.rotation.y + shift, a, b);
+        }
+      };
+    }
+
+    this.rotateTimerId = setInterval(rotateFunc, 15);
   }
 
-  move(distance, endCallback) {
+  move(distance, onMoving, endCallback) {
     const sign = Math.sign(distance);
     let increment = sign * 0.05;
     let distanceLeft = distance;
     const moveTimerId = setInterval(() => {
       distanceLeft -= increment;
       this.position.x += increment;
+      onMoving();
       if (distanceLeft * sign <= 0) {
         clearInterval(moveTimerId);
         endCallback();

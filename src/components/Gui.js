@@ -32,7 +32,6 @@ const renderGui = (camera, controls) => {
   const target = new Vector3();
   const updateFollow = seedScene => {
     if (seedScene.selectedPiece) {
-      // seedScene.updateMatrixWorld();
       seedScene.selectedPiece.getWorldPosition(target);
       camera.lookAt(target);
     }
@@ -40,7 +39,6 @@ const renderGui = (camera, controls) => {
   const updateFP = seedScene => {
     const selected = seedScene.selectedPiece;
     if (selected) {
-      // seedScene.updateMatrixWorld();
       selected.getWorldPosition(target);
       const maxY = selected.getMaxY();
       camera.position.set(target.x, maxY + 0.1, target.z);

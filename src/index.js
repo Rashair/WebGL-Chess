@@ -9,9 +9,9 @@ const height = 720;
 
 const renderer = new WebGLRenderer({ antialias: true });
 const dom = renderer.domElement;
-const scene = new Scene();
+//const scene = new Scene();
 const info = document.getElementById("info");
-const seedScene = new SeedScene(info);
+const scene = new SeedScene(info);
 const camera = new PerspectiveCamera(40, width / height, 0.1, 1000);
 const controls = new OrbitControls(camera, dom);
 
@@ -21,36 +21,34 @@ camera.update = () => {};
 controls.target = new Vector3(-0.5, 0, 2.5);
 
 // gui
-renderGui(camera, controls, seedScene);
+renderGui(camera, controls, scene);
 
 // controls
 controls.maxPolarAngle = Math.PI / 2;
 controls.enableKeys = false;
 controls.enablePan = false;
 
-// mouse interaction
+// interaction
 const interaction = new Interaction(renderer, scene, camera);
-
-// scene
-scene.add(seedScene);
+scene.press = () => {};
+const keyDownHandler = ev => {
+  if (ev.key === "w") {
+    scene.press();
+  }
+};
+window.addEventListener("keydown", keyDownHandler);
 
 // renderer
 renderer.setSize(width, height);
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setClearColor(0x313131, 1);
-seedScene.press = () => {};
-const keyDownHandler = ev => {
-  if (ev.key === "w") {
-    seedScene.press();
-  }
-};
-window.addEventListener("keydown", keyDownHandler);
 
 // render loop
 const render = timeStamp => {
   // controls.update();
-  camera.update(seedScene);
-  // seedScene.update();
+  camera.update(scene);
+  scene.update(timeStamp);
+
   renderer.render(scene, camera);
   window.requestAnimationFrame(render);
 };
