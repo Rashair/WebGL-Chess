@@ -18,7 +18,7 @@ export default class BasicLights extends Group {
   constructor(lightTarget) {
     super();
 
-    const light1 = new PointLight(0xccffff, 1.2, 32, 2);
+    const light1 = new PointLight(0xccffff, 1.2, 40, 2);
     light1.position.set(9, 3, 9);
     this.add(light1);
 

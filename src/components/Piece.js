@@ -2,7 +2,6 @@ import { Group, Mesh, Box3, Material, MeshBasicMaterial, Math as ThreeMath } fro
 import { Ticker } from "three.interaction";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 const path = require("path");
-const fps = 24;
 
 export default class Piece extends Group {
   /**
