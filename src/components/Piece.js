@@ -2,6 +2,7 @@ import { Group, Mesh, Box3, Material, MeshBasicMaterial, Math as ThreeMath } fro
 import { Ticker } from "three.interaction";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 const path = require("path");
+const fps = 24;
 
 export default class Piece extends Group {
   /**
@@ -83,7 +84,7 @@ export default class Piece extends Group {
     let rotateFunc;
     if (!this.light) {
       rotateFunc = () => {
-        this.rotation.y = (this.rotation.y + ThreeMath.degToRad(1)) % 360;
+        this.rotation.y += ThreeMath.degToRad(1);
       };
     } else {
       const a = this.position.x;
@@ -103,12 +104,12 @@ export default class Piece extends Group {
       };
     }
 
-    this.rotateTimerId = setInterval(rotateFunc, 15);
+    this.rotateTimerId = setInterval(rotateFunc, 20);
   }
 
   move(distance, onMoving, endCallback) {
     const sign = Math.sign(distance);
-    let increment = sign * 0.05;
+    let increment = sign * 0.035;
     let distanceLeft = distance;
     const moveTimerId = setInterval(() => {
       distanceLeft -= increment;
@@ -118,6 +119,6 @@ export default class Piece extends Group {
         clearInterval(moveTimerId);
         endCallback();
       }
-    }, 30);
+    }, 20);
   }
 }

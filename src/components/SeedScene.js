@@ -1,7 +1,7 @@
-import { Group, BoxGeometry, MeshPhongMaterial, Mesh, SmoothShading, Object3D, Scene, Vector3 } from "three";
+import { BoxGeometry, MeshPhongMaterial, Mesh, SmoothShading, Object3D, Scene, Vector3 } from "three";
 import BasicLights from "./Lights.js";
 import Piece from "./Piece";
-import { setPosition } from "./helpers/functions.js";
+import { getMaterial } from "./helpers/functions.js";
 
 export default class SeedScene extends Scene {
   /**
@@ -17,18 +17,8 @@ export default class SeedScene extends Scene {
     this.directLightTarget = new Object3D();
     this.add(this.directLightTarget);
 
-    const whiteMat = new MeshPhongMaterial({
-      color: 0xffffff,
-      shading: SmoothShading,
-      shininess: 13,
-      specular: 0xffffff,
-    });
-    const blackMat = new MeshPhongMaterial({
-      color: 0x303030,
-      shading: SmoothShading,
-      shininess: 140,
-      specular: 0x101010,
-    });
+    const whiteMat = getMaterial({ type: "custom", color: "white" });
+    const blackMat = getMaterial({ type: "custom", color: "black" });
 
     const squareGeom = this.initSquareGeometry();
     const board = this.initializeBoard(squareGeom, whiteMat, blackMat);
