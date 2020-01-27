@@ -3,12 +3,14 @@ import {
   ShaderMaterial,
   Vector3,
   MeshPhongMaterial,
+  MeshLambertMaterial,
   Vector4,
   Color,
   UniformsLib,
   UniformsUtils,
   FileLoader,
 } from "three";
+import { defaultGouraud, defaultPhong, Phong, Gouraud, black, white } from "./constants";
 
 /**
  *
@@ -21,35 +23,44 @@ export const setPosition = (obj1, obj2) => {
 };
 
 export const getMaterial = ({ type, color }) => {
+  if (type === defaultPhong) {
+    return new MeshPhongMaterial({
+      color: new Color(color, color, color),
+      shininess: 100,
+    });
+  } else if (type === defaultGouraud) {
+    return new MeshLambertMaterial({
+      color: new Color(color, color, color),
+    });
+  }
+
   let kAmbient;
   let kDiffuse;
   let kSpecular;
   switch (color) {
-    case "white": {
-      kAmbient = "rgb(5%, 5%, 5%)";
-      kDiffuse = "rgb(50%, 50%, 50%)";
-      kSpecular = "rgb(70%, 70%, 70%)";
+    case white: {
+      kAmbient = new Color("rgb(5%, 5%, 5%)");
+      kDiffuse = new Color("rgb(50%, 50%, 50%)");
+      kSpecular = new Color("rgb(70%, 70%, 70%)");
       break;
     }
 
-    case "black": {
-      kAmbient = "rgb(2%, 2%, 2%)";
-      kDiffuse = "rgb(1%, 1%, 1%)";
-      kSpecular = "rgb(40%, 40%, 40%)";
+    case black: {
+      kAmbient = new Color("rgb(2%, 2%, 2%)");
+      kDiffuse = new Color("rgb(5%, 5%, 5%)");
+      kSpecular = new Color("rgb(40%, 40%, 40%)");
       break;
     }
   }
+  const shininess = 100;
 
-  if (type === "default") {
-    console.log("def");
-    return new MeshPhongMaterial({
-      color: kAmbient,
-      specular: kSpecular,
-      shininess: 100,
-    });
+  const defines = {};
+  if (type === Phong) {
+    defines.PHONG = 1;
+  } else if (type === Gouraud) {
+    defines.GOURAUD = 1;
   }
 
-  // phong
   const vertex = document.getElementById("vertex").innerHTML;
   const fragment = document.getElementById("fragment").innerHTML;
 
@@ -58,16 +69,14 @@ export const getMaterial = ({ type, color }) => {
     fog: true,
     uniforms: UniformsUtils.merge([
       {
-        Ka: { value: new Color(kAmbient) },
-        Kd: { value: new Color(kDiffuse) },
-        Ks: { value: new Color(kSpecular) },
-        Shininess: { value: 100.0 },
+        Ka: { value: kAmbient },
+        Kd: { value: kDiffuse },
+        Ks: { value: kSpecular },
+        Shininess: { value: shininess },
       },
       UniformsLib["lights"],
     ]),
-    defines: {
-      PHONG: 1,
-    },
+    defines,
     vertexShader: vertex,
     fragmentShader: fragment,
   });

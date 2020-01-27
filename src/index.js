@@ -4,6 +4,8 @@ import { Interaction } from "three.interaction";
 import renderGui from "./components/Gui.js";
 import SeedScene from "./components/SeedScene.js";
 
+// Cache.enabled = true;
+
 async function appendShaders() {
   return Promise.all([loadShader("vertex"), loadShader("fragment")]);
 }
@@ -24,8 +26,6 @@ async function loadShader(name) {
 }
 
 function init() {
-  Cache.enabled = true;
-
   const width = 1280;
   const height = 720;
 

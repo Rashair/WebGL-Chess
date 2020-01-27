@@ -2,6 +2,7 @@ import { BoxGeometry, MeshPhongMaterial, Mesh, SmoothShading, Object3D, Scene, V
 import BasicLights from "./Lights.js";
 import Piece from "./Piece";
 import { getMaterial } from "./helpers/functions.js";
+import { defaultGouraud, Phong, white, black } from "./helpers/constants.js";
 
 export default class SeedScene extends Scene {
   /**
@@ -17,8 +18,8 @@ export default class SeedScene extends Scene {
     this.directLightTarget = new Object3D();
     this.add(this.directLightTarget);
 
-    const whiteMat = getMaterial({ type: "custom", color: "white" });
-    const blackMat = getMaterial({ type: "custom", color: "black" });
+    const whiteMat = getMaterial({ type: defaultGouraud, color: white });
+    const blackMat = getMaterial({ type: defaultGouraud, color: black });
 
     const squareGeom = this.initSquareGeometry();
     const board = this.initializeBoard(squareGeom, whiteMat, blackMat);
@@ -55,12 +56,12 @@ export default class SeedScene extends Scene {
         switch (type) {
           case "Pawn": {
             const num = 8;
-            const whites = initPieces(num, whiteMat, "White");
+            const whites = initPieces(num, whiteMat, white);
             for (let i = 0; i < num; ++i) {
               addPiece(1, i, whites[i]);
             }
 
-            const blacks = initPieces(num, blackMat, "Black");
+            const blacks = initPieces(num, blackMat, black);
             for (let i = 0; i < num; ++i) {
               addPiece(6, i, blacks[i]);
             }
@@ -68,12 +69,12 @@ export default class SeedScene extends Scene {
           }
           case "Knight": {
             const num = 2;
-            const whites = initPieces(num, whiteMat, "White");
+            const whites = initPieces(num, whiteMat, white);
             whites.forEach(knight => knight.rotateY(Math.PI / 2));
             addPiece(0, 1, whites[0]);
             addPiece(0, 6, whites[1]);
 
-            const blacks = initPieces(num, blackMat, "Black");
+            const blacks = initPieces(num, blackMat, black);
             blacks.forEach(knight => knight.rotateY(-Math.PI / 2));
             addPiece(7, 1, blacks[0]);
             addPiece(7, 6, blacks[1]);
@@ -81,41 +82,41 @@ export default class SeedScene extends Scene {
           }
           case "Bishop": {
             const num = 2;
-            const whites = initPieces(num, whiteMat, "White");
+            const whites = initPieces(num, whiteMat, white);
             addPiece(0, 2, whites[0]);
             addPiece(0, 5, whites[1]);
 
-            const blacks = initPieces(num, blackMat, "Black");
+            const blacks = initPieces(num, blackMat, black);
             addPiece(7, 2, blacks[0]);
             addPiece(7, 5, blacks[1]);
             break;
           }
           case "Rook": {
             const num = 2;
-            const whites = initPieces(num, whiteMat, "White");
+            const whites = initPieces(num, whiteMat, white);
             addPiece(0, 0, whites[0]);
             addPiece(0, 7, whites[1]);
 
-            const blacks = initPieces(num, blackMat, "Black");
+            const blacks = initPieces(num, blackMat, black);
             addPiece(7, 0, blacks[0]);
             addPiece(7, 7, blacks[1]);
             break;
           }
           case "Queen": {
             const num = 1;
-            const whites = initPieces(num, whiteMat, "White");
+            const whites = initPieces(num, whiteMat, white);
             addPiece(0, 3, whites[0]);
 
-            const blacks = initPieces(num, blackMat, "Black");
+            const blacks = initPieces(num, blackMat, black);
             addPiece(7, 3, blacks[0]);
             break;
           }
           case "King": {
             const num = 1;
-            const whites = initPieces(num, whiteMat, "White");
+            const whites = initPieces(num, whiteMat, white);
             addPiece(0, 4, whites[0]);
 
-            const blacks = initPieces(num, blackMat, "Black");
+            const blacks = initPieces(num, blackMat, black);
             addPiece(7, 4, blacks[0]);
             break;
           }
@@ -134,6 +135,7 @@ export default class SeedScene extends Scene {
       }
     });
     geom.computeBoundingBox();
+    geom.matrixAutoUpdate = false;
 
     return geom;
   }
@@ -242,7 +244,7 @@ export default class SeedScene extends Scene {
     const lightTarget = this.directLightTarget;
     const target = new Vector3();
     piece.getWorldPosition(target);
-    const dir = piece.pieceColour === "White" ? 1 : -1;
+    const dir = piece.pieceColour === white ? 1 : -1;
     lightTarget.position.set(target.x + 20 * dir, 0, target.z);
     light.target = this.directLightTarget;
     light.rotateOnMove = (t, a, b) => {
@@ -272,7 +274,7 @@ export default class SeedScene extends Scene {
    */
   onSquareKeyPress(_this, scene) {
     const selected = scene.selectedPiece;
-    const target = selected.pieceColour === "White" ? _this.forward : _this.backward;
+    const target = selected.pieceColour === white ? _this.forward : _this.backward;
     if (!scene.selectedPiece || target.children.length > 0 || this.isPieceMoving) {
       return;
     }

@@ -1,6 +1,7 @@
 import { Group, Mesh, Box3, Material, MeshBasicMaterial, Math as ThreeMath } from "three";
 import { Ticker } from "three.interaction";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { white } from "./helpers/constants";
 const path = require("path");
 
 export default class Piece extends Group {
@@ -16,7 +17,7 @@ export default class Piece extends Group {
     this.loadPromise = shouldLoad === true ? this.load(material) : null;
     this.boundingBox = null;
     this.pieceSquare = null;
-    this.pieceColour = "";
+    this.pieceColour = white;
     this.on("rightdown", this.onMouseRightDown);
   }
 
@@ -90,9 +91,9 @@ export default class Piece extends Group {
       const b = this.position.z;
       let shift = 0;
       if (this.pieceType === "Knight") {
-        shift = this.pieceColour === "White" ? this.rotation.y : -this.rotation.y;
+        shift = this.pieceColour === white ? this.rotation.y : -this.rotation.y;
       } else {
-        shift = this.pieceColour === "White" ? 0 : ThreeMath.degToRad(180);
+        shift = this.pieceColour === white ? 0 : ThreeMath.degToRad(180);
       }
       console.log(shift);
       rotateFunc = () => {
