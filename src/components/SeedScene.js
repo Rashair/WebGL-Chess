@@ -2,7 +2,7 @@ import { BoxGeometry, MeshPhongMaterial, Mesh, SmoothShading, Object3D, Scene, V
 import BasicLights from "./Lights.js";
 import Piece from "./Piece";
 import { getMaterial } from "./helpers/functions.js";
-import { defaultGouraud, Phong, white, black } from "./helpers/constants.js";
+import { defaultGouraud, Phong, white, black, Gouraud, defines } from "./helpers/constants.js";
 
 export default class SeedScene extends Scene {
   /**
@@ -18,8 +18,11 @@ export default class SeedScene extends Scene {
     this.directLightTarget = new Object3D();
     this.add(this.directLightTarget);
 
-    const whiteMat = getMaterial({ type: defaultGouraud, color: white });
-    const blackMat = getMaterial({ type: defaultGouraud, color: black });
+    defines.TYPE = Phong;
+    const whiteMat = getMaterial({ color: white });
+    const blackMat = getMaterial({ color: black });
+    this.whiteMat = whiteMat;
+    this.blackMat = blackMat;
 
     const squareGeom = this.initSquareGeometry();
     const board = this.initializeBoard(squareGeom, whiteMat, blackMat);
@@ -275,7 +278,7 @@ export default class SeedScene extends Scene {
   onSquareKeyPress(_this, scene) {
     const selected = scene.selectedPiece;
     const target = selected.pieceColour === white ? _this.forward : _this.backward;
-    if (!scene.selectedPiece || target.children.length > 0 || this.isPieceMoving) {
+    if (!scene.selectedPiece || target?.children.length > 0 || this.isPieceMoving) {
       return;
     }
 

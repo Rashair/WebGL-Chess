@@ -25,14 +25,14 @@ async function loadShader(name) {
   });
 }
 
+window.infoElement = document.getElementById("info");
 function init() {
   const width = 1280;
   const height = 720;
 
   const renderer = new WebGLRenderer({ antialias: true });
   const dom = renderer.domElement;
-  const info = document.getElementById("info");
-  const scene = new SeedScene(info);
+  const scene = new SeedScene(window.infoElement);
   const camera = new PerspectiveCamera(40, width / height, 0.1, 1000);
   const controls = new OrbitControls(camera, dom);
 

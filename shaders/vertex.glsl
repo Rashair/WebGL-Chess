@@ -1,5 +1,5 @@
 #define saturate(a) clamp( a, 0.0, 1.0 )
-#ifdef PHONG
+#if TYPE == 3
 
 varying vec3 fNormal;
 varying vec3 fPosition;
@@ -11,7 +11,7 @@ void main() {
     gl_Position = projectionMatrix * modelViewMatrix * vert;
 }
 
-#elif defined(GOURAUD)
+#elif TYPE == 4
 
 varying vec3 fNormal;
 varying vec3 fPosition;

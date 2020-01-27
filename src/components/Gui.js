@@ -1,12 +1,15 @@
 import { GUI } from "dat.gui";
 import { Vector3, PerspectiveCamera } from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { Gouraud, Phong, defines, white } from "./helpers/constants";
+import SeedScene from "./SeedScene";
 
 /**
- * @param {PerspectiveCamera} camera - camera
- * @param {Vector3} initialPosition - camera position
- * @param {Vector3} initialTarget - camera target
+ * @param {PerspectiveCamera} camera
+ * @param {OrbitControls} controls
+ * @param {SeedScene} scene
  */
-const renderGui = (camera, controls) => {
+const renderGui = (camera, controls, scene) => {
   const gui = new GUI();
   const initialPosition = { ...camera.position };
   const initialTarget = { ...controls.target };
@@ -42,7 +45,7 @@ const renderGui = (camera, controls) => {
       selected.getWorldPosition(target);
       const maxY = selected.getMaxY();
       camera.position.set(target.x, maxY + 0.1, target.z);
-      const dir = selected.pieceColour == "White" ? 1 : -1;
+      const dir = selected.pieceColour == white ? 1 : -1;
       camera.lookAt(target.x + dir, maxY, target.z);
     }
   };
@@ -57,6 +60,8 @@ const renderGui = (camera, controls) => {
     followCamera: () => {
       options.reset();
       camera.update = updateFollow;
+      camera.position.set(-0.5, 4, -6);
+      camera.lookAt(-0.5, 0, 2.5);
     },
     fpCamera: () => {
       options.reset();
@@ -68,6 +73,25 @@ const renderGui = (camera, controls) => {
   cam.add(camOptions, "followCamera");
   cam.add(camOptions, "fpCamera");
   cam.open();
+
+  const sh = gui.addFolder("Shading");
+  const shOptions = {
+    phong: () => {
+      defines.TYPE = Phong;
+      scene.whiteMat.needsUpdate = true;
+      scene.blackMat.needsUpdate = true;
+      window.infoElement.textContent = "Phong!";
+    },
+    gouraud: () => {
+      defines.TYPE = Gouraud;
+      scene.whiteMat.needsUpdate = true;
+      scene.blackMat.needsUpdate = true;
+      window.infoElement.textContent = "Gouraud!";
+    },
+  };
+  sh.add(shOptions, "phong");
+  sh.add(shOptions, "gouraud");
+  sh.open();
 
   gui.add(options, "reset");
   camOptions.staticCamera();

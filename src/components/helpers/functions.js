@@ -1,34 +1,21 @@
 import {
   Object3D,
   ShaderMaterial,
-  Vector3,
   MeshPhongMaterial,
   MeshLambertMaterial,
-  Vector4,
   Color,
   UniformsLib,
   UniformsUtils,
-  FileLoader,
 } from "three";
-import { defaultGouraud, defaultPhong, Phong, Gouraud, black, white } from "./constants";
+import { defaultGouraud, defaultPhong, Phong, Gouraud, black, white, defines } from "./constants";
 
-/**
- *
- * @param {Object3D} obj1
- * @param {Object3D} obj2
- */
-export const setPosition = (obj1, obj2) => {
-  const pos = obj2.position;
-  obj1.position.set(pos.x, pos.y, pos.z);
-};
-
-export const getMaterial = ({ type, color }) => {
-  if (type === defaultPhong) {
+export const getMaterial = ({ color }) => {
+  if (defines.TYPE === defaultPhong) {
     return new MeshPhongMaterial({
       color: new Color(color, color, color),
       shininess: 100,
     });
-  } else if (type === defaultGouraud) {
+  } else if (defines.TYPE === defaultGouraud) {
     return new MeshLambertMaterial({
       color: new Color(color, color, color),
     });
@@ -54,13 +41,6 @@ export const getMaterial = ({ type, color }) => {
   }
   const shininess = 100;
 
-  const defines = {};
-  if (type === Phong) {
-    defines.PHONG = 1;
-  } else if (type === Gouraud) {
-    defines.GOURAUD = 1;
-  }
-
   const vertex = document.getElementById("vertex").innerHTML;
   const fragment = document.getElementById("fragment").innerHTML;
 
@@ -75,6 +55,7 @@ export const getMaterial = ({ type, color }) => {
         Shininess: { value: shininess },
       },
       UniformsLib["lights"],
+      UniformsLib["fog"],
     ]),
     defines,
     vertexShader: vertex,
