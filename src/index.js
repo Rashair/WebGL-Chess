@@ -30,8 +30,10 @@ function init() {
   const width = 1280;
   const height = 720;
 
-  const renderer = new WebGLRenderer({ antialias: true });
-  const dom = renderer.domElement;
+  const dom = document.createElement("canvas");
+  const context = dom.getContext("webgl2");
+  console.log(context);
+  const gl = new WebGLRenderer({ canvas: dom, context: context, antialias: true });
   const scene = new SeedScene(window.infoElement);
   const camera = new PerspectiveCamera(40, width / height, 0.1, 1000);
   const controls = new OrbitControls(camera, dom);
@@ -50,7 +52,7 @@ function init() {
   controls.enablePan = false;
 
   // interaction
-  const interaction = new Interaction(renderer, scene, camera);
+  const interaction = new Interaction(gl, scene, camera);
   scene.press = () => {};
   const keyDownHandler = ev => {
     if (ev.key === "w") {
@@ -60,30 +62,19 @@ function init() {
   window.addEventListener("keydown", keyDownHandler);
 
   // renderer
-  renderer.setSize(width, height);
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setClearColor(0x313131, 1);
+  gl.setSize(width, height, false);
+  gl.setPixelRatio(window.devicePixelRatio);
+  gl.setClearColor(0x313131, 1);
 
   // render loop
   const render = timeStamp => {
-    // controls.update();
     camera.update(scene);
     scene.update(timeStamp);
 
-    renderer.render(scene, camera);
+    gl.render(scene, camera);
     window.requestAnimationFrame(render);
   };
   window.requestAnimationFrame(render);
-
-  // resize
-  // const windowResizeHandler = () => {
-  //   const { innerHeight, innerWidth } = window;
-  //   renderer.setSize(innerWidth, innerHeight);
-  //   camera.aspect = innerWidth / innerHeight;
-  //   camera.updateProjectionMatrix();
-  // };
-  // windowResizeHandler();
-  // window.addEventListener("resize", windowResizeHandler);
 
   // dom
   dom.oncontextmenu = () => false;

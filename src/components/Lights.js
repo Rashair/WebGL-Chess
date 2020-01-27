@@ -26,7 +26,7 @@ export default class BasicLights extends Group {
     light2.position.set(-9, 3, 9);
     this.add(light2);
 
-    const light3 = new SpotLight(0x0ff0ff, 0.7, 4);
+    const light3 = new SpotLight(0x0ff0ff, 1, 4);
     light3.position.set(-0.5, 10, 2.5);
     this.add(light3);
     this.directLight = light3;

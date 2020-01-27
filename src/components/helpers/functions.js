@@ -8,6 +8,7 @@ import {
   UniformsUtils,
 } from "three";
 import { defaultGouraud, defaultPhong, Phong, Gouraud, black, white, defines } from "./constants";
+import { getVertShader, getFragShader } from "./shaders";
 
 export const getMaterial = ({ color }) => {
   if (defines.TYPE === defaultPhong) {
@@ -58,8 +59,8 @@ export const getMaterial = ({ color }) => {
       UniformsLib["fog"],
     ]),
     defines,
-    vertexShader: vertex,
-    fragmentShader: fragment,
+    vertexShader: getVertShader(),
+    fragmentShader: getFragShader(),
   });
 
   return material;
