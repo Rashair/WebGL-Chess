@@ -14,6 +14,7 @@ export const getMaterial = ({ color }) => {
   if (defines.SHADING_TYPE === defaultPhong) {
     return new MeshPhongMaterial({
       color: new Color(color, color, color),
+      fog: true,
       shininess: 100,
     });
   } else if (defines.SHADING_TYPE === defaultGouraud) {

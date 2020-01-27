@@ -15,12 +15,11 @@ const renderGui = (camera, controls, scene) => {
   const initialTarget = { ...controls.target };
   const initialLenght = camera.getFocalLength();
   const options = {
-    reset: () => {
-      camera.position.set(initialPosition.x, initialPosition.y, initialPosition.z);
-      camera.setFocalLength(initialLenght);
-      camera.lookAt(initialTarget.x, initialTarget.y, initialTarget.z);
-      controls.enabled = false;
-      camera.update = () => {};
+    fog: () => {
+      scene.whiteMat.fog = !scene.whiteMat.fog;
+      scene.blackMat.fog = !scene.blackMat.fog;
+      scene.whiteMat.needsUpdate = true;
+      scene.blackMat.needsUpdate = true;
     },
   };
 
@@ -49,22 +48,30 @@ const renderGui = (camera, controls, scene) => {
       camera.lookAt(target.x + dir, maxY, target.z);
     }
   };
+
+  const reset = () => {
+    camera.position.set(initialPosition.x, initialPosition.y, initialPosition.z);
+    camera.setFocalLength(initialLenght);
+    camera.lookAt(initialTarget.x, initialTarget.y, initialTarget.z);
+    controls.enabled = false;
+    camera.update = () => {};
+  };
   const camOptions = {
     movingCamera: () => {
-      options.reset();
+      reset();
       controls.enabled = true;
     },
     staticCamera: () => {
-      options.reset();
+      reset();
     },
     followCamera: () => {
-      options.reset();
+      reset();
       camera.update = updateFollow;
       camera.position.set(-0.5, 4, -6);
       camera.lookAt(-0.5, 0, 2.5);
     },
     fpCamera: () => {
-      options.reset();
+      reset();
       camera.update = updateFP;
     },
   };
@@ -118,7 +125,7 @@ const renderGui = (camera, controls, scene) => {
   mod.add(modOptions, "blinn");
   mod.open();
 
-  gui.add(options, "reset");
+  gui.add(options, "fog");
   camOptions.staticCamera();
 };
 

@@ -5,14 +5,15 @@ const glsl = x => x.raw[0];
 export const getVertShader = () => {
   return `#version 300 es
           ${defines}
+          ${posVariables}
+          out float fogDepth;
+
           #if SHADING_TYPE == ${Phong}
-              ${posVariables}
-  
               void main() {
                   ${calculatePosition}
+                  ${calcFogDepth}
               }
           #elif SHADING_TYPE == ${Gouraud}
-              ${posVariables}
               out vec4 computedColor;
               ${lightVariables}
               ${punctualLightIntensityToIrradianceFactor}
@@ -22,6 +23,7 @@ export const getVertShader = () => {
               
               void main() {
                   ${calculatePosition}
+                  ${calcFogDepth}
                   
                   ${calculateColor}
                   computedColor = saturate(vec4(finalColor, 1.0));
@@ -35,10 +37,16 @@ export const getFragShader = () => {
         ${defines}
         out vec4 outputColor;
 
+        in float fogDepth;
+        uniform float fogNear;
+        uniform float fogFar;
+        uniform vec3 fogColor;
+
         #if SHADING_TYPE == ${Phong}
             in vec3 fNormal;
             in vec3 fPosition;
             ${lightVariables}
+            
             ${punctualLightIntensityToIrradianceFactor}
             ${spotLightIntensityToIrradianceFactor}
             ${calculatePointLight}
@@ -46,13 +54,20 @@ export const getFragShader = () => {
 
             void main() {
                 ${calculateColor}
+
+                ${mixFog}
+
                 outputColor = vec4(finalColor, 1.0);
             }
 
         #elif SHADING_TYPE == ${Gouraud}
             in vec4 computedColor;
             void main() {
-                outputColor = computedColor;
+                vec3 finalColor = vec3(computedColor);
+
+                ${mixFog}
+
+                outputColor = vec4(finalColor, 1.0);
             }
         #endif
     `;
@@ -60,7 +75,10 @@ export const getFragShader = () => {
 
 const defines = `
     #define saturate(a) clamp( a, 0.0, 1.0 )
-    #define eps 0.000001`;
+    #define eps 0.000001
+    #define whiteCompliment(a) ( 1.0 - saturate( a ) )
+    #define LOG2 1.442695
+    `;
 
 const posVariables = `
     out vec3 fNormal;
@@ -138,23 +156,10 @@ const computeLightColor = `
         #if LIGHT_MODEL == ${Phong}
             specular = saturate(Ks * pow(lambertian, Shininess));
         #elif LIGHT_MODEL == ${Blinn}
-
-            // this is blinn phong
             vec3 h = normalize(v + s);
             float specAngle = max(dot(h, n), 0.0);
             specular = saturate(Ks * pow(specAngle, Shininess * 4.0));
         #endif
-
-        
-
-       // vec3 viewDir = normalize(-vertPos);
-        // // this is phong (for comparison)
-        // if(mode == 2) {
-        // vec3 reflectDir = reflect(-lightDir, normal);
-        // specAngle = max(dot(reflectDir, viewDir), 0.0);
-        // // note that the exponent is different here
-        // specular = pow(specAngle, shininess/4.0);
-        // }
     }
 
 
@@ -190,3 +195,16 @@ const calculateColor = glsl`
     }
     finalColor += calculateSpotLight(fNormal, spotLights[0]);
 `;
+
+const mixFog = glsl`
+    #ifdef USE_FOG
+        float fogFactor = smoothstep( fogNear, fogFar, fogDepth );
+        finalColor = saturate(mix(finalColor, fogColor, fogFactor));
+    #endif
+    `;
+
+const calcFogDepth = glsl`
+    #ifdef USE_FOG
+        fogDepth = -fPosition.z;
+    #endif
+    `;

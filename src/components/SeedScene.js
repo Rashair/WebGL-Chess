@@ -1,7 +1,7 @@
-import { BoxGeometry, MeshPhongMaterial, Mesh, SmoothShading, Object3D, Scene, Vector3 } from "three";
+import { BoxGeometry, MeshPhongMaterial, Mesh, SmoothShading, Object3D, Scene, Vector3, Fog, Color } from "three";
 import BasicLights from "./Lights.js";
 import Piece from "./Piece";
-import { getMaterial } from "./helpers/functions.js";
+import { getMaterial } from "./helpers/createMaterial.js";
 import { defaultGouraud, Phong, white, black, Gouraud, defines } from "./helpers/constants.js";
 
 export default class SeedScene extends Scene {
@@ -17,6 +17,10 @@ export default class SeedScene extends Scene {
     this.add(this.lights);
     window.directLightTarget = new Object3D();
     this.add(window.directLightTarget);
+
+    const backColor = new Color(0xccffff);
+    this.fog = new Fog(backColor, 6, 20);
+    this.background = backColor;
 
     const whiteMat = getMaterial({ color: white });
     const blackMat = getMaterial({ color: black });
