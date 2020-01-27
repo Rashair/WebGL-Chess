@@ -11,12 +11,12 @@ import { defaultGouraud, defaultPhong, Phong, Gouraud, black, white, defines } f
 import { getVertShader, getFragShader } from "./shaders";
 
 export const getMaterial = ({ color }) => {
-  if (defines.TYPE === defaultPhong) {
+  if (defines.SHADING_TYPE === defaultPhong) {
     return new MeshPhongMaterial({
       color: new Color(color, color, color),
       shininess: 100,
     });
-  } else if (defines.TYPE === defaultGouraud) {
+  } else if (defines.SHADING_TYPE === defaultGouraud) {
     return new MeshLambertMaterial({
       color: new Color(color, color, color),
     });

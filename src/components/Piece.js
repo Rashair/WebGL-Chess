@@ -95,7 +95,6 @@ export default class Piece extends Group {
       } else {
         shift = this.pieceColour === white ? 0 : ThreeMath.degToRad(180);
       }
-      console.log(shift);
       rotateFunc = () => {
         this.rotation.y += ThreeMath.degToRad(1);
         if (this.light) {

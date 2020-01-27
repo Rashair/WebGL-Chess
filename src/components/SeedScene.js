@@ -18,7 +18,6 @@ export default class SeedScene extends Scene {
     window.directLightTarget = new Object3D();
     this.add(window.directLightTarget);
 
-    defines.TYPE = Phong;
     const whiteMat = getMaterial({ color: white });
     const blackMat = getMaterial({ color: black });
     this.whiteMat = whiteMat;
@@ -285,6 +284,8 @@ export default class SeedScene extends Scene {
     }
 
     if (!scene.selectedPiece || target?.children.length > 0 || this.isPieceMoving) {
+      setTimeout(() => (scene.press = selected.parent.onSquareKeyPress), 500);
+      console.log("Prevented move");
       return;
     }
 

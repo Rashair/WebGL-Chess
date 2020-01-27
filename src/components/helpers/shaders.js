@@ -1,17 +1,17 @@
-import { Gouraud, Phong } from "./constants";
+import { Gouraud, Phong, Blinn } from "./constants";
 
 const glsl = x => x.raw[0];
 
 export const getVertShader = () => {
   return `#version 300 es
           ${defines}
-          #if TYPE == ${Phong}
+          #if SHADING_TYPE == ${Phong}
               ${posVariables}
   
               void main() {
                   ${calculatePosition}
               }
-          #elif TYPE == ${Gouraud}
+          #elif SHADING_TYPE == ${Gouraud}
               ${posVariables}
               out vec4 computedColor;
               ${lightVariables}
@@ -35,7 +35,7 @@ export const getFragShader = () => {
         ${defines}
         out vec4 outputColor;
 
-        #if TYPE == ${Phong}
+        #if SHADING_TYPE == ${Phong}
             in vec3 fNormal;
             in vec3 fPosition;
             ${lightVariables}
@@ -49,7 +49,7 @@ export const getFragShader = () => {
                 outputColor = vec4(finalColor, 1.0);
             }
 
-        #elif TYPE == ${Gouraud}
+        #elif SHADING_TYPE == ${Gouraud}
             in vec4 computedColor;
             void main() {
                 outputColor = computedColor;
@@ -131,7 +131,31 @@ const computeLightColor = `
 
     vec3 ambient = Ka;
     vec3 diffuse = saturate(Kd * max(dot(s, n), 0.0));
-    vec3 specular = saturate(Ks * pow(max(dot(r, v), 0.0), Shininess));
+
+    float lambertian = max(dot(v, r), 0.0);
+    vec3 specular = vec3(0.0);
+    if (lambertian > 0.0) {
+        #if LIGHT_MODEL == ${Phong}
+            specular = saturate(Ks * pow(lambertian, Shininess));
+        #elif LIGHT_MODEL == ${Blinn}
+
+            // this is blinn phong
+            vec3 h = normalize(v + s);
+            float specAngle = max(dot(h, n), 0.0);
+            specular = saturate(Ks * pow(specAngle, Shininess * 4.0));
+        #endif
+
+        
+
+       // vec3 viewDir = normalize(-vertPos);
+        // // this is phong (for comparison)
+        // if(mode == 2) {
+        // vec3 reflectDir = reflect(-lightDir, normal);
+        // specAngle = max(dot(reflectDir, viewDir), 0.0);
+        // // note that the exponent is different here
+        // specular = pow(specAngle, shininess/4.0);
+        // }
+    }
 
 
     return distanceMult * (ambient + light.color * (diffuse + specular));

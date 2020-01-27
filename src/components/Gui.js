@@ -1,7 +1,7 @@
 import { GUI } from "dat.gui";
 import { Vector3, PerspectiveCamera } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { Gouraud, Phong, defines, white } from "./helpers/constants";
+import { Gouraud, Phong, defines, white, Blinn } from "./helpers/constants";
 import SeedScene from "./SeedScene";
 
 /**
@@ -83,21 +83,40 @@ const renderGui = (camera, controls, scene) => {
   const sh = gui.addFolder("Shading");
   const shOptions = {
     phong: () => {
-      defines.TYPE = Phong;
+      defines.SHADING_TYPE = Phong;
       scene.whiteMat.needsUpdate = true;
       scene.blackMat.needsUpdate = true;
-      window.infoElement.textContent = "Phong!";
+      window.infoElement.textContent = "Phong shading!";
     },
     gouraud: () => {
-      defines.TYPE = Gouraud;
+      defines.SHADING_TYPE = Gouraud;
       scene.whiteMat.needsUpdate = true;
       scene.blackMat.needsUpdate = true;
-      window.infoElement.textContent = "Gouraud!";
+      window.infoElement.textContent = "Gouraud shading!";
     },
   };
   sh.add(shOptions, "phong");
   sh.add(shOptions, "gouraud");
   sh.open();
+
+  const mod = gui.addFolder("Light model");
+  const modOptions = {
+    phong: () => {
+      defines.LIGHT_MODEL = Phong;
+      scene.whiteMat.needsUpdate = true;
+      scene.blackMat.needsUpdate = true;
+      window.infoElement.textContent = "Phong light model!";
+    },
+    blinn: () => {
+      defines.LIGHT_MODEL = Blinn;
+      scene.whiteMat.needsUpdate = true;
+      scene.blackMat.needsUpdate = true;
+      window.infoElement.textContent = "Blinn light model!";
+    },
+  };
+  mod.add(modOptions, "phong");
+  mod.add(modOptions, "blinn");
+  mod.open();
 
   gui.add(options, "reset");
   camOptions.staticCamera();
