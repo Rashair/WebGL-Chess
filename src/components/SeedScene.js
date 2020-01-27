@@ -15,8 +15,8 @@ export default class SeedScene extends Scene {
 
     this.lights = new BasicLights();
     this.add(this.lights);
-    this.directLightTarget = new Object3D();
-    this.add(this.directLightTarget);
+    window.directLightTarget = new Object3D();
+    this.add(window.directLightTarget);
 
     defines.TYPE = Phong;
     const whiteMat = getMaterial({ color: white });
@@ -152,7 +152,7 @@ export default class SeedScene extends Scene {
         square.position.x = x;
         square.position.z = z;
         square.on("click", ev => this.onSquareClick(ev, this));
-        square.onSquareKeyPress = () => this.onSquareKeyPress(square, this);
+        square.onSquareKeyPress = key => this.onSquareKeyPress(square, this, key);
 
         row.push(square);
       }
@@ -244,12 +244,12 @@ export default class SeedScene extends Scene {
 
   changePieceLightDirection(piece) {
     const light = this.lights.directLight;
-    const lightTarget = this.directLightTarget;
+    const lightTarget = window.directLightTarget;
     const target = new Vector3();
     piece.getWorldPosition(target);
     const dir = piece.pieceColour === white ? 1 : -1;
     lightTarget.position.set(target.x + 20 * dir, 0, target.z);
-    light.target = this.directLightTarget;
+    light.target = lightTarget;
     light.rotateOnMove = (t, a, b) => {
       lightTarget.position.x = a + 10 * Math.cos(t);
       lightTarget.position.z = b + 10 * Math.sin(t);
@@ -275,9 +275,15 @@ export default class SeedScene extends Scene {
   /**
    * @param {SeedScene} scene
    */
-  onSquareKeyPress(_this, scene) {
+  onSquareKeyPress(_this, scene, key) {
     const selected = scene.selectedPiece;
-    const target = selected.pieceColour === white ? _this.forward : _this.backward;
+    let target;
+    if (key === "w") {
+      target = selected.pieceColour === white ? _this.forward : _this.backward;
+    } else {
+      target = selected.pieceColour === white ? _this.backward : _this.forward;
+    }
+
     if (!scene.selectedPiece || target?.children.length > 0 || this.isPieceMoving) {
       return;
     }
@@ -313,7 +319,7 @@ export default class SeedScene extends Scene {
         piece.pieceSquare = targetParsed;
         to.add(from.children.pop());
         piece.position.x = 0;
-        this.setSelectedPiece(piece);
+        //this.setSelectedPiece(piece);
         this.isPieceMoving = false;
       }
     );

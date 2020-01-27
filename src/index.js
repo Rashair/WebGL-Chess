@@ -55,8 +55,8 @@ function init() {
   const interaction = new Interaction(gl, scene, camera);
   scene.press = () => {};
   const keyDownHandler = ev => {
-    if (ev.key === "w") {
-      scene.press();
+    if (ev.key === "w" || ev.key == "s") {
+      scene.press(ev.key);
     }
   };
   window.addEventListener("keydown", keyDownHandler);
@@ -81,7 +81,4 @@ function init() {
   document.body.appendChild(dom);
 }
 
-appendShaders().then(
-  () => init(),
-  error => console.log(error)
-);
+init();

@@ -134,7 +134,7 @@ const computeLightColor = `
     vec3 specular = saturate(Ks * pow(max(dot(r, v), 0.0), Shininess));
 
 
-    return distanceMult * light.color * (ambient + diffuse + specular);
+    return distanceMult * (ambient + light.color * (diffuse + specular));
 `;
 
 const calculatePointLight = `

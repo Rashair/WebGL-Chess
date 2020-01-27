@@ -74,6 +74,12 @@ const renderGui = (camera, controls, scene) => {
   cam.add(camOptions, "fpCamera");
   cam.open();
 
+  const spot = gui.addFolder("Spotlight");
+  const lightTargetPos = window.directLightTarget.position;
+  spot.add(lightTargetPos, "x", -20, 20, 0.1).listen();
+  spot.add(lightTargetPos, "y", -15, 15, 0.1).listen();
+  spot.add(lightTargetPos, "z", -15, 15, 0.1).listen();
+
   const sh = gui.addFolder("Shading");
   const shOptions = {
     phong: () => {

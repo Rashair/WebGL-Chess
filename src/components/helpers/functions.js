@@ -42,9 +42,6 @@ export const getMaterial = ({ color }) => {
   }
   const shininess = 100;
 
-  const vertex = document.getElementById("vertex").innerHTML;
-  const fragment = document.getElementById("fragment").innerHTML;
-
   const material = new ShaderMaterial({
     lights: true,
     fog: true,
