@@ -1,8 +1,14 @@
 import { Group, Mesh, Box3, Material, MeshBasicMaterial, Math as ThreeMath } from "three";
-import { Ticker } from "three.interaction";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { white } from "./helpers/constants";
+import pawnPath from "../models/Pawn.gltf";
+import knightPath from "../models/Knight.gltf";
+import bishopPath from "../models/Bishop.gltf";
+import rookPath from "../models/Rook.gltf";
+import queenPath from "../models/Queen.gltf";
+import kingPath from "../models/King.gltf";
 const path = require("path");
+const loader = new GLTFLoader();
 
 export default class Piece extends Group {
   /**
@@ -22,10 +28,9 @@ export default class Piece extends Group {
   }
 
   async load(material) {
-    const loader = new GLTFLoader();
     return new Promise((resolve, reject) => {
       loader.load(
-        path.join("src", "models", this.pieceType + ".gltf"),
+        this.getPath(),
         gltf => {
           const mesh = gltf.scene.children[0];
           mesh.position.set(0, 0, 0);
@@ -38,6 +43,26 @@ export default class Piece extends Group {
         reject
       );
     });
+  }
+
+  getPath() {
+    // workaround for webpack
+    switch (this.pieceType) {
+      case "Pawn":
+        return pawnPath;
+      case "Knight":
+        return knightPath;
+      case "Bishop":
+        return bishopPath;
+      case "Rook":
+        return rookPath;
+      case "Queen":
+        return queenPath;
+      case "King":
+        return kingPath;
+      default:
+        return pawnPath;
+    }
   }
 
   /**
