@@ -1,7 +1,7 @@
 const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require("webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const buildPath = "./build/";
 
 module.exports = {
@@ -9,10 +9,8 @@ module.exports = {
   output: {
     path: path.join(__dirname, buildPath),
     filename: "[name].[hash].js",
-    //publicPath: path.join(__dirname, buildPath)
   },
   target: "web",
-  devtool: "source-map",
   module: {
     rules: [
       {
@@ -46,7 +44,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, "css-loader"],
+        use: ["style-loader", "css-loader"],
       },
     ],
   },
@@ -56,8 +54,6 @@ module.exports = {
       title: "WebGL Chess",
     }),
     new webpack.HotModuleReplacementPlugin(),
-    new MiniCssExtractPlugin({
-      filename: "static/css/[name].[hash:8].css",
-    }),
+    new CleanWebpackPlugin(),
   ],
 };
