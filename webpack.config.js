@@ -1,5 +1,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const webpack = require("webpack");
 const buildPath = "./build/";
 
@@ -8,6 +9,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, buildPath),
     filename: "[name].[hash].js",
+    //publicPath: path.join(__dirname, buildPath)
   },
   target: "web",
   devtool: "source-map",
@@ -19,12 +21,20 @@ module.exports = {
         exclude: path.resolve(__dirname, "./node_modules/"),
       },
       {
-        test: /\.(jpe?g|png|gif|svg|tga|gltf|babylon|mtl|pcb|pcd|prwm|obj|mat|mp3|ogg)$/i,
+        test: /\.(jpe?g|png|gif|svg|tga|babylon|mtl|pcb|pcd|prwm|obj|mat|mp3|ogg)$/i,
         use: "file-loader",
         exclude: path.resolve(__dirname, "./node_modules/"),
       },
+	  {
+	    test: /\.(gltf)$/,
+	    use: [
+		  {
+		    loader: "gltf-webpack-loader"
+		  }
+	    ]
+	  },
       {
-        test: /\.(vert|frag|glsl|shader|txt|gltf)$/i,
+        test: /\.(vert|frag|glsl|shader|txt)$/i,
         use: "raw-loader",
         exclude: path.resolve(__dirname, "./node_modules/"),
       },
@@ -44,15 +54,18 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader", "postcss-loader"],
+        use: [MiniCssExtractPlugin.loader,"css-loader", "postcss-loader"],
       },
     ],
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: path.join(__dirname, "public", "index.html"),
-      title: "WebGL Chess",
+	  title: "WebGL Chess"
     }),
     new webpack.HotModuleReplacementPlugin(),
+	new MiniCssExtractPlugin({
+      filename: 'static/css/[name].[hash:8].css',
+    })
   ],
 };
