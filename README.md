@@ -1,6 +1,6 @@
 # WebGL Chess
 
-Proof of concept for chess using WebGL with Three.js
+Proof of concept for chess using WebGL2 with Three.js
 
 ## Resources
 
@@ -10,35 +10,39 @@ Favicon acquired from [iconarchive](http://www.iconarchive.com/show/orb-os-x-ico
 Board created with help of [codepen](https://codepen.io/foolof41/details/ALXKjp)
 
 ## Install
-
 Before you begin, make sure you are comfortable with terminal commands and have [Node and NPM installed](https://www.npmjs.com/get-npm).
 
-### Install via Download
+## Running
+In terminal at that folder type, `npm install` to set things up. To get going run: `npm start`.
 
-In terminal at that folder type `npm install` to set things up. To get going run: `npm start`.
+## How to use
+Selection:
+You can select piece by click with left mouse button.
+After selection piece will display light (Spotlight) from itself.
+You can choose spotlight target position with 'Spotlight' menu options.
 
-## Running the development server
+Move: 
+You can move piece by clicking on it and choosing desired square, but only forward or backward (no moves right or left).
+You can't move piece to square occupied by other piece, but you can go through it.
+You can also move piece with 'W' and 'S' keys, but piece have to be selected first (useful with fpCamera).
 
-To see the changes you make to the starter project go to the project folder in terminal and type...
+Rotation:
+You can turn on/off piece rotation by clicking on it with right mouse button.
+Rotation also rotates spotlight if piece is selected.
 
-```bash
-npm start
-```
+Most of the options are accessible in the menu to the right.
+Camera:
+    - focal length - focal length for current camera
+	- movingCamera - most flexible camera, you can move it, while holding left mouse button, 
+		also you can drift away from chessboard by using mouse scroll (either scroll or click scroll and move mouse)
+	- staticCamera - immovable camera with fixed position and rotation
+	- followCamera - camera with fixed position, which follows current piece move
+	- fpCamera - first person camera, set on selected piece (if no, then static)
+Spotlight - position selected piece spotlight target
+Shading - switch between Phong and Gouraud shading
+Light model - switch between Phong and Phong-Blinn light model
+Toggle fog - turn the fog on/off - on by default
+Toggle day-night - turn day-night cycle on/off - off by default
 
-This command will bundle the project code and start a development server at [http://localhost:8080/](http://localhost:8080/). Visit this in your web browser; every time you make changes to the code the page will refresh. Congratulations, you are good to go!
+Additional information on performed actions are displayed in left corner of the canvas.
 
-## Editing the code
-
-The first file you should open is `./objects/Scene.js`. In it you will find the three objects comprising the world represented in your browser. The flower, the island, and the lights illuminating them are each represented as a javascript file in the `./object/s` folder. Open these, edit them and see your changes in the browser. If something goes wrong a message will displayed in the debug console of the browser.
-
-## Importing local files
-
-Local files, such as images and 3D models, are imported into the application as URLs then loaded asynchronously with three.js. Most common files that three.js uses are supported. Shader files are loaded as raw text. For more information about this system see the [webpack site](https://webpack.js.org/).
-
-## About the models
-
-Both models were exported from the [free 3D software Blender](https://www.blender.org/) using the [three.js exporter](https://github.com/timoxley/threejs/tree/master/utils/exporters/blender). They were downloaded from the Google Poly project.
-
-## Building the project for the web
-
-Once you are happy with your project you'll be sure to want to show it off. Running `npm run build` in terminal will bundle your project into the folder `./build/`. You can upload this directory to a web server. For more complex results read [this guide](https://webpack.js.org/guides/production/).

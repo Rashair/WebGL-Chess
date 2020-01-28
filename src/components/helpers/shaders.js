@@ -7,6 +7,7 @@ export const getVertShader = () => {
           ${defines}
           ${posVariables}
           out float fogDepth;
+          uniform float time;
 
           #if SHADING_TYPE == ${Phong}
               void main() {
@@ -112,7 +113,6 @@ const lightVariables = `
     };
     uniform SpotLight spotLights[ NUM_SPOT_LIGHTS ];
     `;
-
 const punctualLightIntensityToIrradianceFactor = `
     float punctualLightIntensityToIrradianceFactor( const float lightDistance, const float cutoffDistance, const float decayExponent ) {
         if( cutoffDistance > 0.0 && decayExponent > 0.0 ) {
@@ -149,9 +149,7 @@ const computeLightColor = `
     vec3 v = normalize(-fPosition);
     vec3 r = normalize(reflect(-s, n));
 
-    vec3 ambient = Ka;
     vec3 diffuse = saturate(Kd * max(dot(s, n), 0.0));
-
     float lambertian = max(dot(v, r), 0.0);
     vec3 specular = vec3(0.0);
     if (lambertian > 0.0) {
@@ -163,13 +161,6 @@ const computeLightColor = `
             specular = saturate(Ks * pow(specAngle, Shininess * 4.0));
         #endif
     }
-
-    vec3 lightCol = light.color; 
-    #ifdef DAY_NIGHT
-        lightCol = lightCol * abs(sin(time/10.0));
-    #endif
-
-    return distanceMult * (ambient + lightCol * (diffuse + specular));
 `;
 
 const calculatePointLight = `
@@ -177,6 +168,11 @@ const calculatePointLight = `
         ${computeCoeff}
         float distanceMult = punctualLightIntensityToIrradianceFactor(distanceToLight, light.distance, light.decay);
         ${computeLightColor}
+        vec3 lightCol = light.color; 
+        #ifdef DAY_NIGHT
+            lightCol = lightCol * abs(sin(time/10.0));
+        #endif
+        return distanceMult * lightCol * (diffuse + specular);
     }
     `;
 const calculateSpotLight = `
@@ -184,6 +180,7 @@ const calculateSpotLight = `
         ${computeCoeff}
         float distanceMult = spotLightIntensityToIrradianceFactor(light, s, distanceToLight);
         ${computeLightColor}
+        return distanceMult * light.color * (diffuse + specular);
     }
     `;
 
@@ -195,7 +192,7 @@ const calculatePosition = glsl`
 `;
 
 const calculateColor = glsl`
-    vec3 finalColor = vec3(0.0, 0.0, 0.0);
+    vec3 finalColor = vec3(Ka);
     for(int i = 0; i < NUM_POINT_LIGHTS; ++i) {
         finalColor += calculatePointLight(fNormal, pointLights[i]); 
     }
