@@ -42,6 +42,8 @@ export const getFragShader = () => {
         uniform float fogFar;
         uniform vec3 fogColor;
 
+        uniform float time;
+
         #if SHADING_TYPE == ${Phong}
             in vec3 fNormal;
             in vec3 fPosition;
@@ -162,8 +164,12 @@ const computeLightColor = `
         #endif
     }
 
+    vec3 lightCol = light.color; 
+    #ifdef DAY_NIGHT
+        lightCol = lightCol * abs(sin(time/10.0));
+    #endif
 
-    return distanceMult * (ambient + light.color * (diffuse + specular));
+    return distanceMult * (ambient + lightCol * (diffuse + specular));
 `;
 
 const calculatePointLight = `

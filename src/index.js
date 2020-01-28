@@ -1,8 +1,9 @@
-import { WebGLRenderer, PerspectiveCamera, Scene, Vector3, Fog, Cache, FileLoader } from "three";
+import { WebGLRenderer, PerspectiveCamera, Scene, Vector3, Fog, Cache, FileLoader, Clock } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Interaction } from "three.interaction";
 import renderGui from "./components/Gui.js";
 import SeedScene from "./components/SeedScene.js";
+import { sharedUniforms } from "./components/helpers/createMaterial.js";
 
 // Cache.enabled = true;
 
@@ -27,8 +28,8 @@ async function loadShader(name) {
 
 window.infoElement = document.getElementById("info");
 function init() {
-  const width = 1280;
-  const height = 720;
+  const width = 1422;
+  const height = 800;
 
   const dom = document.createElement("canvas");
   const context = dom.getContext("webgl2");
@@ -64,12 +65,19 @@ function init() {
   // renderer
   gl.setSize(width, height, false);
   gl.setPixelRatio(window.devicePixelRatio);
-  gl.setClearColor(0x313131, 1);
 
   // render loop
+  const clock = new Clock();
+  const whiteTime = scene.whiteMat.uniforms.time;
+  const blackTime = scene.blackMat.uniforms.time;
+
   const render = timeStamp => {
     camera.update(scene);
     scene.update(timeStamp);
+
+    const delta = 1.0 * clock.getDelta();
+    whiteTime.value += delta;
+    blackTime.value += delta;
 
     gl.render(scene, camera);
     window.requestAnimationFrame(render);

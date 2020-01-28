@@ -287,8 +287,7 @@ export default class SeedScene extends Scene {
       target = selected.pieceColour === white ? _this.backward : _this.forward;
     }
 
-    if (!scene.selectedPiece || target?.children.length > 0 || this.isPieceMoving) {
-      setTimeout(() => (scene.press = selected.parent.onSquareKeyPress), 500);
+    if (!scene.selectedPiece || target?.children.length > 0 || this.isPieceMoving === true) {
       console.log("Prevented move");
       return;
     }
@@ -326,6 +325,7 @@ export default class SeedScene extends Scene {
         piece.position.x = 0;
         //this.setSelectedPiece(piece);
         this.isPieceMoving = false;
+        this.press = piece.parent.onSquareKeyPress;
       }
     );
   }

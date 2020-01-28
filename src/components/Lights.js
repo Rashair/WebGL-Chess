@@ -15,14 +15,14 @@ export default class BasicLights extends Group {
    *
    * @param {Group} lightTarget
    */
-  constructor(lightTarget) {
+  constructor() {
     super();
 
-    const light1 = new PointLight(0xccffff, 1.5, 0, 2);
+    const light1 = new PointLight(0xffffdc, 1.5, 0, 2);
     light1.position.set(9, 3, 9);
     this.add(light1);
 
-    const light2 = new PointLight(0xfff0cf, 2, 32, 2);
+    const light2 = new PointLight(0xdcffff, 2, 32, 2);
     light2.position.set(-9, 3, 9);
     this.add(light2);
 

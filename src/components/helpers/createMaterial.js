@@ -41,7 +41,11 @@ export const getMaterial = ({ color }) => {
       break;
     }
   }
-  const shininess = 100;
+
+  const sharedUniforms = {
+    Shininess: { value: 100.0 },
+    time: { value: 23.0 },
+  };
 
   const material = new ShaderMaterial({
     lights: true,
@@ -51,8 +55,8 @@ export const getMaterial = ({ color }) => {
         Ka: { value: kAmbient },
         Kd: { value: kDiffuse },
         Ks: { value: kSpecular },
-        Shininess: { value: shininess },
       },
+      sharedUniforms,
       UniformsLib["lights"],
       UniformsLib["fog"],
     ]),

@@ -11,23 +11,17 @@ import SeedScene from "./SeedScene";
  */
 const renderGui = (camera, controls, scene) => {
   const gui = new GUI();
+  gui.domElement.id = "gui";
   const initialPosition = { ...camera.position };
   const initialTarget = { ...controls.target };
   const initialLenght = camera.getFocalLength();
-  const options = {
-    fog: () => {
-      scene.whiteMat.fog = !scene.whiteMat.fog;
-      scene.blackMat.fog = !scene.blackMat.fog;
-      scene.whiteMat.needsUpdate = true;
-      scene.blackMat.needsUpdate = true;
-    },
-  };
 
   const cam = gui.addFolder("Camera");
   const focalLength = { len: initialLenght };
   const onLenChange = val => camera.setFocalLength(val);
   cam
     .add(focalLength, "len", 5, 300)
+    .name("focal length")
     .onChange(onLenChange)
     .listen();
 
@@ -93,13 +87,13 @@ const renderGui = (camera, controls, scene) => {
       defines.SHADING_TYPE = Phong;
       scene.whiteMat.needsUpdate = true;
       scene.blackMat.needsUpdate = true;
-      window.infoElement.textContent = "Phong shading!";
+      scene.setInfo("Phong shading!");
     },
     gouraud: () => {
       defines.SHADING_TYPE = Gouraud;
       scene.whiteMat.needsUpdate = true;
       scene.blackMat.needsUpdate = true;
-      window.infoElement.textContent = "Gouraud shading!";
+      scene.setInfo("Gouraud shading!");
     },
   };
   sh.add(shOptions, "phong");
@@ -112,20 +106,36 @@ const renderGui = (camera, controls, scene) => {
       defines.LIGHT_MODEL = Phong;
       scene.whiteMat.needsUpdate = true;
       scene.blackMat.needsUpdate = true;
-      window.infoElement.textContent = "Phong light model!";
+      scene.setInfo("Phong light model!");
     },
     blinn: () => {
       defines.LIGHT_MODEL = Blinn;
       scene.whiteMat.needsUpdate = true;
       scene.blackMat.needsUpdate = true;
-      window.infoElement.textContent = "Blinn light model!";
+      scene.setInfo("Blinn light model!");
     },
   };
   mod.add(modOptions, "phong");
   mod.add(modOptions, "blinn");
   mod.open();
 
-  gui.add(options, "fog");
+  const options = {
+    fog: () => {
+      scene.whiteMat.fog = !scene.whiteMat.fog;
+      scene.blackMat.fog = !scene.blackMat.fog;
+      scene.whiteMat.needsUpdate = true;
+      scene.blackMat.needsUpdate = true;
+      scene.setInfo("Fog " + (scene.whiteMat.fog === true ? "on" : "off"));
+    },
+    dayNight: () => {
+      defines.DAY_NIGHT = !defines.DAY_NIGHT;
+      scene.whiteMat.needsUpdate = true;
+      scene.blackMat.needsUpdate = true;
+      scene.setInfo("Day-night " + (defines.DAY_NIGHT === true ? "on" : "off"));
+    },
+  };
+  gui.add(options, "fog").name("Toggle fog");
+  gui.add(options, "dayNight").name("Toggle day-night");
   camOptions.staticCamera();
 };
 
