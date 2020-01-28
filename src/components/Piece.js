@@ -30,8 +30,6 @@ export default class Piece extends Group {
           const mesh = gltf.scene.children[0];
           mesh.position.set(0, 0, 0);
           mesh.scale.multiplyScalar(0.3);
-          mesh.castShadow = true;
-          mesh.receiveShadow = true;
           this.addPieceMesh(mesh, material);
           console.log(this.pieceType + " loaded");
           resolve(this);

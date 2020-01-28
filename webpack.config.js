@@ -24,7 +24,7 @@ module.exports = {
         exclude: path.resolve(__dirname, "./node_modules/"),
       },
       {
-        test: /\.(vert|frag|glsl|shader|txt)$/i,
+        test: /\.(vert|frag|glsl|shader|txt|gltf)$/i,
         use: "raw-loader",
         exclude: path.resolve(__dirname, "./node_modules/"),
       },
