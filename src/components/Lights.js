@@ -1,20 +1,6 @@
-import {
-  Group,
-  SpotLight,
-  PointLight,
-  AmbientLight,
-  HemisphereLight,
-  Vector3,
-  DirectionalLight,
-  SphereBufferGeometry,
-  DirectionalLightHelper,
-} from "three";
+import { Group, SpotLight, PointLight } from "three";
 
 export default class BasicLights extends Group {
-  /**
-   *
-   * @param {Group} lightTarget
-   */
   constructor() {
     super();
 

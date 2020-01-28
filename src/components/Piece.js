@@ -1,4 +1,4 @@
-import { Group, Mesh, Box3, Material, MeshBasicMaterial, Math as ThreeMath } from "three";
+import { Group, Box3, MeshBasicMaterial, Math as ThreeMath } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { white } from "./helpers/constants";
 import pawnPath from "../models/Pawn.gltf";
@@ -7,7 +7,6 @@ import bishopPath from "../models/Bishop.gltf";
 import rookPath from "../models/Rook.gltf";
 import queenPath from "../models/Queen.gltf";
 import kingPath from "../models/King.gltf";
-const path = require("path");
 const loader = new GLTFLoader();
 
 export default class Piece extends Group {

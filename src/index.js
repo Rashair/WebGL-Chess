@@ -1,30 +1,8 @@
-import { WebGLRenderer, PerspectiveCamera, Scene, Vector3, Fog, Cache, FileLoader, Clock } from "three";
+import { WebGLRenderer, PerspectiveCamera, Vector3 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Interaction } from "three.interaction";
 import renderGui from "./components/Gui.js";
 import SeedScene from "./components/SeedScene.js";
-import { sharedUniforms } from "./components/helpers/createMaterial.js";
-
-// Cache.enabled = true;
-
-async function appendShaders() {
-  return Promise.all([loadShader("vertex"), loadShader("fragment")]);
-}
-
-async function loadShader(name) {
-  const loader = new FileLoader();
-  return new Promise((resolve, reject) => {
-    loader.load(
-      `shaders/${name}.glsl`,
-      shader => {
-        document.getElementById(name).innerHTML = shader;
-        resolve();
-      },
-      null,
-      error => reject(error)
-    );
-  });
-}
 
 window.infoElement = document.getElementById("info");
 function init() {
@@ -33,7 +11,6 @@ function init() {
 
   const dom = document.createElement("canvas");
   const context = dom.getContext("webgl2");
-  console.log(context);
   const gl = new WebGLRenderer({ canvas: dom, context: context, antialias: true });
   const scene = new SeedScene(window.infoElement);
   const camera = new PerspectiveCamera(40, width / height, 0.1, 1000);
@@ -53,6 +30,7 @@ function init() {
   controls.enablePan = false;
 
   // interaction
+  // eslint-disable-next-line no-unused-vars
   const interaction = new Interaction(gl, scene, camera);
   scene.press = () => {};
   const keyDownHandler = ev => {
@@ -67,17 +45,14 @@ function init() {
   gl.setPixelRatio(window.devicePixelRatio);
 
   // render loop
-  const clock = new Clock();
   const whiteTime = scene.whiteMat.uniforms.time;
   const blackTime = scene.blackMat.uniforms.time;
-
   const render = timeStamp => {
     camera.update(scene);
-    scene.update(timeStamp);
 
-    const delta = 1.0 * clock.getDelta();
-    whiteTime.value += delta;
-    blackTime.value += delta;
+    const timeVal = timeStamp * 0.001;
+    whiteTime.value = timeVal;
+    blackTime.value = timeVal;
 
     gl.render(scene, camera);
     window.requestAnimationFrame(render);

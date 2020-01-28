@@ -1,13 +1,5 @@
-import {
-  Object3D,
-  ShaderMaterial,
-  MeshPhongMaterial,
-  MeshLambertMaterial,
-  Color,
-  UniformsLib,
-  UniformsUtils,
-} from "three";
-import { defaultGouraud, defaultPhong, Phong, Gouraud, black, white, defines } from "./constants";
+import { ShaderMaterial, MeshPhongMaterial, MeshLambertMaterial, Color, UniformsLib, UniformsUtils } from "three";
+import { defaultGouraud, defaultPhong, black, white, defines } from "./constants";
 import { getVertShader, getFragShader } from "./shaders";
 
 export const getMaterial = ({ color }) => {

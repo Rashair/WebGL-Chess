@@ -1,8 +1,6 @@
 import { GUI } from "dat.gui";
-import { Vector3, PerspectiveCamera } from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { Vector3 } from "three";
 import { Gouraud, Phong, defines, white, Blinn } from "./helpers/constants";
-import SeedScene from "./SeedScene";
 
 /**
  * @param {PerspectiveCamera} camera

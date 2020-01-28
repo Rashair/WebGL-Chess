@@ -21,7 +21,7 @@ module.exports = {
         exclude: path.resolve(__dirname, "./node_modules/"),
       },
       {
-	  test: /\.(jpe?g|png|gif|svg|tga|babylon|mtl||gltf|pcb|pcd|prwm|obj|mat|mp3|ogg|bin)$/i,
+        test: /\.(jpe?g|png|gif|svg|tga|babylon|mtl||gltf|pcb|pcd|prwm|obj|mat|mp3|ogg|bin)$/i,
         use: "file-loader",
         exclude: path.resolve(__dirname, "./node_modules/"),
       },
@@ -46,7 +46,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader"],
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
     ],
   },

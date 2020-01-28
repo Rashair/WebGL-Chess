@@ -1,8 +1,8 @@
-import { BoxGeometry, MeshPhongMaterial, Mesh, SmoothShading, Object3D, Scene, Vector3, Fog, Color } from "three";
+import { BoxGeometry, Mesh, Object3D, Scene, Vector3, Fog, Color } from "three";
 import BasicLights from "./Lights.js";
 import Piece from "./Piece";
 import { getMaterial } from "./helpers/createMaterial.js";
-import { defaultGouraud, Phong, white, black, Gouraud, defines } from "./helpers/constants.js";
+import { white, black } from "./helpers/constants.js";
 
 export default class SeedScene extends Scene {
   /**
@@ -272,7 +272,6 @@ export default class SeedScene extends Scene {
     }
 
     scene.movePiece(scene.selectedPiece.parent, _this);
-    // scene.setSelectedPiece(null);
   }
 
   /**
@@ -323,16 +322,9 @@ export default class SeedScene extends Scene {
         piece.pieceSquare = targetParsed;
         to.add(from.children.pop());
         piece.position.x = 0;
-        //this.setSelectedPiece(piece);
         this.isPieceMoving = false;
         this.press = piece.parent.onSquareKeyPress;
       }
     );
-  }
-
-  update(timeStamp) {
-    if (!this.pieces) {
-      return;
-    }
   }
 }
