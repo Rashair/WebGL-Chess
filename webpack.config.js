@@ -25,14 +25,6 @@ module.exports = {
         use: "file-loader",
         exclude: path.resolve(__dirname, "./node_modules/"),
       },
-      // {
-        // test: /\.(gltf)$/,
-        // use: [
-          // {
-            // loader: "gltf-webpack-loader",
-          // },
-        // ],
-      // },
       {
         test: /\.(vert|frag|glsl|shader|txt)$/i,
         use: "raw-loader",
