@@ -138,7 +138,7 @@ const spotLightIntensityToIrradianceFactor = `
 const computeCoeff = `
     vec3 lVector = light.position - fPosition;
     float distanceToLight = length( lVector );
-    vec3 s = normalize(lVector);
+    vec3 lightDir = normalize(lVector);
 `;
 
 const computeLightColor = `
@@ -147,18 +147,19 @@ const computeLightColor = `
     }
 
     vec3 v = normalize(-fPosition);
-    vec3 r = normalize(reflect(-s, n));
-
-    vec3 diffuse = saturate(Kd * max(dot(s, n), 0.0));
-    float lambertian = max(dot(v, r), 0.0);
+	float lambertian = max(dot(lightDir, n), 0.0);
+    vec3 diffuse = saturate(Kd * lambertian);
     vec3 specular = vec3(0.0);
+	
     if (lambertian > 0.0) {
         #if LIGHT_MODEL == ${Phong}
-            specular = saturate(Ks * pow(lambertian, Shininess));
+			vec3 reflectDir = normalize(reflect(-lightDir, n));
+			float specAngle = max(dot(reflectDir, v), 0.0);
+            specular = saturate(Ks * pow(specAngle, Shininess / 4.0));
         #elif LIGHT_MODEL == ${Blinn}
-            vec3 h = normalize(v + s);
+            vec3 h = normalize(v + lightDir);
             float specAngle = max(dot(h, n), 0.0);
-            specular = saturate(Ks * pow(specAngle, Shininess * 4.0));
+            specular = saturate(Ks * pow(specAngle, Shininess));
         #endif
     }
 `;
@@ -178,7 +179,7 @@ const calculatePointLight = `
 const calculateSpotLight = `
     vec3 calculateSpotLight(vec3 n, SpotLight light) {
         ${computeCoeff}
-        float distanceMult = spotLightIntensityToIrradianceFactor(light, s, distanceToLight);
+        float distanceMult = spotLightIntensityToIrradianceFactor(light, lightDir, distanceToLight);
         ${computeLightColor}
         return distanceMult * light.color * (diffuse + specular);
     }

@@ -43,7 +43,7 @@ export const getMaterial = ({ color }) => {
   }
 
   const sharedUniforms = {
-    Shininess: { value: 100.0 },
+    Shininess: { value: 128.0 },
     time: { value: 23.0 },
   };
 
