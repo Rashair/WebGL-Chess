@@ -25,7 +25,7 @@ export default class Piece extends Group {
     const loader = new GLTFLoader();
     return new Promise((resolve, reject) => {
       loader.load(
-        path.join("models", this.pieceType + ".gltf"),
+        path.join("src", "models", this.pieceType + ".gltf"),
         gltf => {
           const mesh = gltf.scene.children[0];
           mesh.position.set(0, 0, 0);
