@@ -79,61 +79,45 @@ const renderGui = (camera, controls, scene) => {
   spot.add(lightTargetPos, "y", -15, 15, 0.1).listen();
   spot.add(lightTargetPos, "z", -15, 15, 0.1).listen();
 
-  const sh = gui.addFolder("Shading");
-  const shOptions = {
-    phong: () => {
-      defines.SHADING_TYPE = Phong;
+  gui
+    .add(defines, "SHADING_TYPE", { Phong, Gouraud })
+    .onChange(val => {
       scene.whiteMat.needsUpdate = true;
       scene.blackMat.needsUpdate = true;
-      scene.setInfo("Phong shading!");
-    },
-    gouraud: () => {
-      defines.SHADING_TYPE = Gouraud;
-      scene.whiteMat.needsUpdate = true;
-      scene.blackMat.needsUpdate = true;
-      scene.setInfo("Gouraud shading!");
-    },
-  };
-  sh.add(shOptions, "phong");
-  sh.add(shOptions, "gouraud");
-  sh.open();
+      scene.setInfo((val == Phong ? "Phong" : "Gouraoud") + " light model!");
+    })
+    .name("Shading");
 
-  const mod = gui.addFolder("Light model");
-  const modOptions = {
-    phong: () => {
-      defines.LIGHT_MODEL = Phong;
+  gui
+    .add(defines, "LIGHT_MODEL", { Phong, Blinn })
+    .onChange(val => {
       scene.whiteMat.needsUpdate = true;
       scene.blackMat.needsUpdate = true;
-      scene.setInfo("Phong light model!");
-    },
-    blinn: () => {
-      defines.LIGHT_MODEL = Blinn;
-      scene.whiteMat.needsUpdate = true;
-      scene.blackMat.needsUpdate = true;
-      scene.setInfo("Blinn light model!");
-    },
-  };
-  mod.add(modOptions, "phong");
-  mod.add(modOptions, "blinn");
-  mod.open();
+      scene.setInfo((val == Phong ? "Phong" : "Blinn") + " light model!");
+    })
+    .name("Light model");
 
   const options = {
-    fog: () => {
-      scene.whiteMat.fog = !scene.whiteMat.fog;
+    fog: () => {},
+    dayNight: () => {},
+  };
+  gui
+    .add(scene.whiteMat, "fog")
+    .onChange(val => {
       scene.blackMat.fog = !scene.blackMat.fog;
       scene.whiteMat.needsUpdate = true;
       scene.blackMat.needsUpdate = true;
-      scene.setInfo("Fog " + (scene.whiteMat.fog === true ? "on" : "off"));
-    },
-    dayNight: () => {
-      defines.DAY_NIGHT = !defines.DAY_NIGHT;
+      scene.setInfo("Fog " + (val === true ? "on" : "off"));
+    })
+    .name("Toggle fog");
+  gui
+    .add(defines, "DAY_NIGHT")
+    .onChange(val => {
       scene.whiteMat.needsUpdate = true;
       scene.blackMat.needsUpdate = true;
-      scene.setInfo("Day-night " + (defines.DAY_NIGHT === true ? "on" : "off"));
-    },
-  };
-  gui.add(options, "fog").name("Toggle fog");
-  gui.add(options, "dayNight").name("Toggle day-night");
+      scene.setInfo("Day-night " + (val === true ? "on" : "off"));
+    })
+    .name("Toggle day-night");
   camOptions.staticCamera();
 };
 
